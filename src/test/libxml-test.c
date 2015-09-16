@@ -1,19 +1,6 @@
-/**
- * section: Parsing
- * synopsis: Parse an XML document in memory to a tree and free it
- * purpose: Demonstrate the use of xmlReadMemory() to read an XML file
- *          into a tree and and xmlFreeDoc() to free the resulting tree
- * usage: parse3
- * test: parse3
- * author: Daniel Veillard
- * copy: see Copyright for the status of this software.
- */
-
 #include <stdio.h>
 #include <string.h>
-
 #include <curl/curl.h>
-
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
@@ -34,7 +21,7 @@ static void example3Func(const char *content, int length)
     xmlXPathContextPtr xpathCtx;
     xmlXPathObjectPtr xpathObj;
 
-    const xmlChar* xpathExpr = "/SessionInfo/Challenge";
+    const xmlChar* xpathExpr = (xmlChar*) "/SessionInfo/Challenge";
 
     /*
      * The document being in memory, it have no base per RFC 2396,

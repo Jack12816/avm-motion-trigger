@@ -36,7 +36,6 @@ size_t writefunc(void *ptr, size_t size, size_t nmemb, struct string *s)
 int main(void)
 {
   CURL *curl;
-  CURLcode res;
 
   curl = curl_easy_init();
   if(curl) {
@@ -46,7 +45,7 @@ int main(void)
     curl_easy_setopt(curl, CURLOPT_URL, "http://gateway.lan/login_sid.lua");
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writefunc);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA, &s);
-    res = curl_easy_perform(curl);
+    curl_easy_perform(curl);
 
     printf("%s\n", s.ptr);
     free(s.ptr);

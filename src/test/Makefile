@@ -5,9 +5,9 @@ GCC := gcc
 XML_CONF := xml2-config
 
 CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -g
-INCLUDES = $(shell $(XML_CONF) --libs) -lcurl
+INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lconfig
 
-OBJS = $(wildcard ../avm/*.o)
+OBJS = $(wildcard ../avm/*.o ../*.o)
 SRCS = $(wildcard *.c)
 BINS = $(patsubst %.c,%,$(SRCS))
 CLEAN_BINS = $(BINS:%=clean-%)

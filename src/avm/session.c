@@ -25,6 +25,15 @@
 #include "common/http-request.h"
 #include "session.h"
 
+short session_id_chk(const char *session_id)
+{
+    if (0 == strcmp(session_id, INVALID_SESSION_ID)) {
+        return -1;
+    }
+
+    return 1;
+}
+
 char* parse_start_session_res(struct response *res)
 {
     return xml_read_char("/SessionInfo/SID", res);

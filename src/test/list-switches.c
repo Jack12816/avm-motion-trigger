@@ -3,6 +3,7 @@
 #include <locale.h>
 #include "../config.h"
 #include "../avm/session.h"
+#include "../avm/switches.h"
 
 int main(void)
 {
@@ -11,22 +12,24 @@ int main(void)
     const char *config_file = "avm-motion-trigger.conf";
     struct config c = get_config(config_file);
 
-    printf("   avm.hostname: %s\n", c.avm.hostname);
-    printf("   avm.username: %s\n", c.avm.username);
-    printf("   avm.password: %ls\n", c.avm.password);
-    printf("\n");
-
     char *session_id = session_start(c.avm.hostname, c.avm.username,
             c.avm.password);
 
-    if (SESSION_INVALID == session_id_chk(session_id)) {
-        printf(" * Login was not successfuly!\n");
-        exit(EXIT_FAILURE);
-    }
 
-    printf("     session id: %s\n", session_id);
+    size_t max_ains = 32;
+    char* ains[max_ains];
+
     printf("\n");
-    printf(" --- Time to logout --- \n\n");
+
+    int found = switches_list(c.avm.hostname, session_id, ains, max_ains);
+
+    if (0 == found) {
+        printf(" * No switches found!\n");
+    } else {
+        for(short i = 0; i < found; i++) {
+            printf(" * Found: %s\n", ains[i]);
+        }
+    }
 
     session_end(c.avm.hostname, session_id);
 

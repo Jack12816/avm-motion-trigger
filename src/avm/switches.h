@@ -19,21 +19,13 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AVM_SESSION_H
-#define AVM_SESSION_H
+#ifndef AVM_SWITCHES_H
+#define AVM_SWITCHES_H
 
-#include "common/xml-response.h"
-#include "session/password-challenge.h"
-#include "session/password-response.h"
+#define SWITCH_PATH "/webservices/homeautoswitch.lua"
 
-#define INVALID_SESSION_ID "0000000000000000"
-#define SESSION_INVALID -1
+#include <stdlib.h>
 
-short session_id_chk(const char*);
-
-char* parse_start_session_res(struct response*);
-char* session_start(const char*, const char*, const wchar_t*);
-
-void session_end(const char*, const char*);
+int switches_list(const char*, const char*, char* [], size_t);
 
 #endif

@@ -1,22 +1,19 @@
-SUBDIRS := avm test
+SUBDIRS ?= avm test
 CLEAN_SUBDIRS := $(SUBDIRS:%=clean-%)
 
-RM := rm
-GCC := gcc
-XML_CONF := xml2-config
+SRCS := $(patsubst %.c,%,$(wildcard *.c))
+CLEAN_SRCS := $(SRCS:%=clean-%)
 
-CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -g
-INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lconfig
+$(SRCS): INFILE = $(@).c
+$(SRCS): OUTFILE = $(@).o
+$(SRCS):
+	$(TEST) -f $(OUTFILE) || \
+		$(GCC) -c $(INFILE) $(CFLAGS) -std=gnu11 $(INCLUDES)
 
-SRCS = $(wildcard *.c)
-OBJS = $(patsubst %.c,%,$(SRCS))
-CLEAN_OBJS = $(OBJS:%=clean-%)
-
-$(OBJS):
-	$(GCC) -c $@.c $(CFLAGS) -std=gnu11 $(INCLUDES)
-
-$(CLEAN_OBJS):
-	$(RM) $(@:clean-%=%).o || true
+$(CLEAN_SRCS): FILE = $(@:clean-%=%).o
+$(CLEAN_SRCS):
+	$(TEST) -f $(FILE) && \
+		$(RM) $(FILE) 2>/dev/null || true
 
 $(SUBDIRS):
 	$(MAKE) all -C $@
@@ -24,8 +21,8 @@ $(SUBDIRS):
 $(CLEAN_SUBDIRS):
 	$(MAKE) clean -C $(@:clean-%=%)
 
-build: $(OBJS) $(SUBDIRS)
-clean: $(CLEAN_OBJS) $(CLEAN_SUBDIRS)
+clean: $(CLEAN_SRCS) $(CLEAN_SUBDIRS)
+build: $(SRCS) $(SUBDIRS)
 all: build
 
-.PHONY : all clean $(SUBDIRS) $(CLEAN_SUBDIRS)
+.PHONY: all clean $(SUBDIRS) $(CLEAN_SUBDIRS)

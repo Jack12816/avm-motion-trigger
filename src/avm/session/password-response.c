@@ -27,7 +27,7 @@
 #include <locale.h>
 #include <iconv.h>
 #include <openssl/md5.h>
-#include "session-id.h"
+#include "password-response.h"
 
 wchar_t* striso8859_1(const wchar_t *str)
 {
@@ -89,7 +89,7 @@ char* strmd5(const unsigned char *str, int len)
     return res;
 }
 
-wchar_t* get_response(const wchar_t *challenge, const wchar_t *password)
+wchar_t* passwd_response(const wchar_t *challenge, const wchar_t *password)
 {
     size_t challenge_len = wcslen(challenge);
     size_t md5_src_len  = challenge_len + wcslen(password) + 1;

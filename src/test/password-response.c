@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <wchar.h>
 #include <locale.h>
-#include "../avm/session-id.h"
+#include "../avm/session/password-response.h"
 
 int main(void)
 {
@@ -11,7 +11,7 @@ int main(void)
     const wchar_t *password = L"äbc";
     wchar_t *iso_password = striso8859_1(password);
 
-    wchar_t *response = get_response(challenge, password);
+    wchar_t *response = passwd_response(challenge, password);
 
     wprintf(L"          password: %ls\n", password);
     wprintf(L"      new password: %ls\n", iso_password);

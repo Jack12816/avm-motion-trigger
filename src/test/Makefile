@@ -1,23 +1,32 @@
-.PHONY : clean build
-
-RM := rm
-GCC := gcc
-XML_CONF := xml2-config
-
-CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -g
-INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lconfig -lcrypto
-
-OBJS = $(wildcard ../avm/*.o ../*.o)
+OBJS = $(shell $(FIND) .. -type f -name *.o)
 SRCS = $(wildcard *.c)
 BINS = $(patsubst %.c,%,$(SRCS))
+TEST_BINS = $(BINS:%=test-%)
 CLEAN_BINS = $(BINS:%=clean-%)
 
 $(BINS):
-	$(GCC) -o $@.bin $@.c $(OBJS) $(CFLAGS) -std=gnu11 $(INCLUDES)
+ifeq ($(OBJS),)
+	$(MAKE) build -C ..
+endif
+	$(TEST) -f $@ || \
+		$(GCC) -o $@ $@.c $(OBJS) $(CFLAGS) -std=gnu11 $(INCLUDES)
 
+$(TEST_BINS): FILE = $(@:test-%=%)
+$(TEST_BINS): test-%:%
+	#
+	# Test $(FILE)
+	#
+	@./$(FILE)
+	@$(PRINTF) "\n\n"
+
+$(CLEAN_BINS): FILE = $(@:clean-%=%)
 $(CLEAN_BINS):
-	$(RM) $(@:clean-%=%).bin || true
+	$(TEST) -f $(FILE) && \
+		$(RM) $(FILE) 2>/dev/null || true
 
-build: $(BINS)
 clean: $(CLEAN_BINS)
+test: $(TEST_BINS)
+build: $(BINS)
 all: build
+
+.PHONY: clean build

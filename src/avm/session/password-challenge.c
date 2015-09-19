@@ -26,9 +26,7 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
-
-#include "http-request.h"
-#include "challenge.h"
+#include "password-challenge.h"
 
 char* parse_challenge_res(struct response *res)
 {
@@ -84,7 +82,7 @@ char* parse_challenge_res(struct response *res)
     return challenge;
 }
 
-char* get_challenge(const char *hostname)
+char* passwd_challenge(const char *hostname)
 {
     struct response res;
     char *challenge;
@@ -100,7 +98,6 @@ char* get_challenge(const char *hostname)
 
     challenge = parse_challenge_res(&res);
 
-    // Release some memory
     free(res.ptr);
 
     return challenge;

@@ -3,7 +3,7 @@
 #include <string.h>
 #include <libxml/parser.h>
 #include <curl/curl.h>
-#include "../avm/challenge.h"
+#include "../avm/session/password-challenge.h"
 
 int main(void)
 {
@@ -23,7 +23,7 @@ int main(void)
      * Get a challenge token.
      */
     char *challenge;
-    challenge = get_challenge("gateway.lan");
+    challenge = passwd_challenge("gateway.lan");
     printf("%s\n", challenge);
 
     /*

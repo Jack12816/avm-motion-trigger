@@ -19,12 +19,17 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AVM_CHALLENGE_H
-#define AVM_CHALLENGE_H
+#ifndef AVM_PASSWORD_RESPONSE_H
+#define AVM_PASSWORD_RESPONSE_H
 
-#include "http-request.h"
+struct strutf16le {
+    char *ptr;
+    int len;
+};
 
-char* parse_challenge_res(struct response*);
-char* get_challenge(const char*);
+wchar_t* striso8859_1(const wchar_t*);
+struct strutf16le* strutf16le(const wchar_t*);
+char* strmd5(const unsigned char*, int);
+wchar_t* passwd_response(const wchar_t*, const wchar_t*);
 
 #endif

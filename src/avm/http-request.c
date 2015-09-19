@@ -23,7 +23,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
-
 #include "http-request.h"
 
 void init_response(struct response *res)

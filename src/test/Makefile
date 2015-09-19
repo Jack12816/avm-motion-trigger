@@ -5,7 +5,7 @@ GCC := gcc
 XML_CONF := xml2-config
 
 CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -g
-INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lconfig
+INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lconfig -lcrypto
 
 OBJS = $(wildcard ../avm/*.o ../*.o)
 SRCS = $(wildcard *.c)

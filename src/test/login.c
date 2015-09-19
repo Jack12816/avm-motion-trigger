@@ -16,10 +16,14 @@ int main(void)
     printf("   avm.password: %ls\n", c.avm.password);
     printf("\n");
 
-    char *session_id = start_session(c.avm.hostname, c.avm.username,
+    char *session_id = session_start(c.avm.hostname, c.avm.username,
             c.avm.password);
 
-    printf("     session id: %s", session_id);
+    printf("     session id: %s\n", session_id);
+    printf("\n");
+    printf(" --- Time to logout --- \n\n");
+
+    session_end(c.avm.hostname, session_id);
 
     return 0;
 }

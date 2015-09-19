@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <wchar.h>
 #include <curl/curl.h>
 #include "http-request.h"
 
@@ -42,7 +43,7 @@ void init_response(struct response *res)
     res->ptr = malloc(res->len + 1);
 
     if (NULL == res->ptr) {
-        fprintf(stderr, "init_response::malloc() failed\n");
+        fwprintf(stderr, L"init_response::malloc() failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -55,7 +56,7 @@ size_t append_response_chunk(void *ptr, size_t size, size_t nmemb, struct respon
     res->ptr = realloc(res->ptr, new_len + 1);
 
     if (NULL == res->ptr) {
-        fprintf(stderr, "append_response_chunk::realloc() failed\n");
+        fwprintf(stderr, L"append_response_chunk::realloc() failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -66,7 +67,7 @@ size_t append_response_chunk(void *ptr, size_t size, size_t nmemb, struct respon
     return size * nmemb;
 }
 
-int perform_get_req(char *url, struct response *res)
+int req_get_wor(const char *url)
 {
     CURL *curl;
     CURLcode result;
@@ -74,7 +75,36 @@ int perform_get_req(char *url, struct response *res)
     curl = curl_easy_init();
 
     if (NULL == curl) {
-        fprintf(stderr, "perform_get_req::curl_easy_init() failed\n");
+        fwprintf(stderr, L"req_get_wor::curl_easy_init() failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    curl_easy_setopt(curl, CURLOPT_URL, url);
+    curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+
+    result = curl_easy_perform(curl);
+
+    /* always cleanup */
+    curl_easy_cleanup(curl);
+
+    if (CURLE_OK != result) {
+        fwprintf(stderr, L"req_get_wor::curl_easy_perform() failed (%s)\n",
+                curl_easy_strerror(result));
+        return 1;
+    }
+
+    return 0;
+}
+
+int req_get_wr(const char *url, struct response *res)
+{
+    CURL *curl;
+    CURLcode result;
+
+    curl = curl_easy_init();
+
+    if (NULL == curl) {
+        fwprintf(stderr, L"req_get_wr::curl_easy_init() failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -88,7 +118,7 @@ int perform_get_req(char *url, struct response *res)
     curl_easy_cleanup(curl);
 
     if (CURLE_OK != result) {
-        fprintf(stderr, "perform_get_req::curl_easy_perform() failed (%s)\n",
+        fwprintf(stderr, L"req_get_wr::curl_easy_perform() failed (%s)\n",
                 curl_easy_strerror(result));
         return 1;
     }

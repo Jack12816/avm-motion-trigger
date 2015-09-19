@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <wchar.h>
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
@@ -41,7 +42,7 @@ char* xml_read_char(const char *xpath, struct response *res)
     doc = xmlReadMemory(res->ptr, res->len, "noname.xml", NULL, 0);
 
     if (NULL == doc) {
-        fprintf(stderr, "Failed to parse document\n");
+        fwprintf(stderr, L"Failed to parse document\n");
         return "";
     }
 
@@ -49,7 +50,7 @@ char* xml_read_char(const char *xpath, struct response *res)
     xpathCtx = xmlXPathNewContext(doc);
 
     if (NULL == xpathCtx) {
-        fprintf(stderr,"xml_read_char::xmlXPathNewContext() failed\n");
+        fwprintf(stderr, L"xml_read_char::xmlXPathNewContext() failed\n");
         xmlFreeDoc(doc);
         return "";
     }
@@ -58,14 +59,14 @@ char* xml_read_char(const char *xpath, struct response *res)
     xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
 
     if (NULL == xpathObj) {
-        fprintf(stderr,"xml_read_char::xmlXPathEvalExpression() failed\n");
+        fwprintf(stderr, L"xml_read_char::xmlXPathEvalExpression() failed\n");
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
         return "";
     }
 
     if (xpathObj->nodesetval->nodeNr < 1) {
-        fprintf(stderr,"xml_read_char() node not found\n");
+        fwprintf(stderr, L"xml_read_char() node not found\n");
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
         return "";

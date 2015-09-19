@@ -21,6 +21,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <wchar.h>
 #include "common/http-request.h"
 #include "session.h"
 
@@ -29,7 +30,7 @@ char* parse_start_session_res(struct response *res)
     return xml_read_char("/SessionInfo/SID", res);
 }
 
-char* start_session(const char *hostname, const char *username,
+char* session_start(const char *hostname, const char *username,
         const wchar_t *password)
 {
     char *challenge = passwd_challenge(hostname);
@@ -47,8 +48,8 @@ char* start_session(const char *hostname, const char *username,
 
     init_response(&res);
 
-    if (perform_get_req(build_url(hostname, path), &res) > 0) {
-        fprintf(stderr, "start_session::perform_get_req failed\n");
+    if (req_get_wr(build_url(hostname, path), &res) > 0) {
+        fwprintf(stderr, L"start_session::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -57,4 +58,19 @@ char* start_session(const char *hostname, const char *username,
     free(res.ptr);
 
     return session_id;
+}
+
+void session_end(const char *hostname, const char *session_id)
+{
+    // Build the path for the URL
+    size_t path_len = 48;
+    char *path = (char*) malloc(sizeof(char) * path_len);
+    snprintf(path, path_len, "/login_sid.lua?sid=%s&logout=1337",
+            session_id);
+
+    // Perform the request
+    if (req_get_wor(build_url(hostname, path)) > 0) {
+        fwprintf(stderr, L"end_session::perform_get_req failed\n");
+        exit(EXIT_FAILURE);
+    }
 }

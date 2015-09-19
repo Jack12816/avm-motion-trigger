@@ -27,6 +27,8 @@
 #include "session/password-response.h"
 
 char* parse_start_session_res(struct response*);
-char* start_session(const char*, const char*, const wchar_t*);
+char* session_start(const char*, const char*, const wchar_t*);
+
+void session_end(const char*, const char*);
 
 #endif

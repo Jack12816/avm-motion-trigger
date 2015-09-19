@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <wchar.h>
 #include "password-challenge.h"
 
 char* parse_challenge_res(struct response *res)
@@ -34,8 +35,8 @@ char* passwd_challenge(const char *hostname)
 
     init_response(&res);
 
-    if (perform_get_req(build_url(hostname, "/login_sid.lua"), &res) > 0) {
-        fprintf(stderr, "get_challenge::perform_get_req failed\n");
+    if (req_get_wr(build_url(hostname, "/login_sid.lua"), &res) > 0) {
+        fwprintf(stderr, L"get_challenge::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 

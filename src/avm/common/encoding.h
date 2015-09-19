@@ -19,8 +19,8 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AVM_HTTP_REQUEST_H
-#define AVM_HTTP_REQUEST_H
+#ifndef AVM_ENCODING_H
+#define AVM_ENCODING_H
 
 struct strutf16le {
     char *ptr;

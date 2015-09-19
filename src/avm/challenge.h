@@ -25,6 +25,6 @@
 #include "http-request.h"
 
 char* parse_challenge_res(struct response*);
-char* get_challenge();
+char* get_challenge(const char*);
 
 #endif

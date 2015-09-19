@@ -28,6 +28,7 @@ struct response {
 };
 
 void init_response(struct response*);
+char* build_url(const char*, const char*);
 size_t append_response_chunk(void*, size_t, size_t, struct response*);
 int perform_get_req(char*, struct response*);
 

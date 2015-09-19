@@ -84,14 +84,14 @@ char* parse_challenge_res(struct response *res)
     return challenge;
 }
 
-char* get_challenge()
+char* get_challenge(const char *hostname)
 {
     struct response res;
     char *challenge;
     int result;
 
     init_response(&res);
-    result = perform_get_req("http://gateway.lan/login_sid.lua", &res);
+    result = perform_get_req(build_url(hostname, "/login_sid.lua"), &res);
 
     if (result > 0) {
         fprintf(stderr, "get_challenge::perform_get_req failed\n");

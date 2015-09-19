@@ -23,7 +23,7 @@ int main(void)
      * Get a challenge token.
      */
     char *challenge;
-    challenge = get_challenge();
+    challenge = get_challenge("gateway.lan");
     printf("%s\n", challenge);
 
     /*

@@ -1,28 +1,28 @@
 OBJS = $(shell $(FIND) .. -type f -name *.o)
-SRCS = $(wildcard *.c)
-BINS = $(patsubst %.c,%,$(SRCS))
-TEST_BINS = $(BINS:%=test-%)
-CLEAN_BINS = $(BINS:%=clean-%)
+BINS = $(patsubst %.c,%.out,$(wildcard *.c))
+TEST_BINS = $(BINS:%.out=test-%)
+CLEAN_BINS = $(BINS:%.out=clean-%)
 
+$(BINS): INFILE = $(@:%.out=%.c)
 $(BINS):
 ifeq ($(OBJS),)
 	$(MAKE) build -C ..
 endif
 	$(TEST) -f $@ || \
-		$(GCC) -o $@ $@.c $(OBJS) $(CFLAGS) -std=gnu11 $(INCLUDES)
+		$(GCC) -o $@ $(INFILE) $(OBJS) $(CFLAGS) -std=gnu11 $(INCLUDES)
 
-$(TEST_BINS): FILE = $(@:test-%=%)
-$(TEST_BINS): test-%:%
+$(TEST_BINS): BIN = $(@:test-%=%.out)
+$(TEST_BINS): test-%:%.out
 	#
-	# Test $(FILE)
+	# Test $(BIN)
 	#
-	@./$(FILE)
+	@./$(BIN)
 	@$(PRINTF) "\n\n"
 
-$(CLEAN_BINS): FILE = $(@:clean-%=%)
+$(CLEAN_BINS): BIN = $(@:clean-%=%.out)
 $(CLEAN_BINS):
-	$(TEST) -f $(FILE) && \
-		$(RM) $(FILE) 2>/dev/null || true
+	$(TEST) -f $(BIN) && \
+		$(RM) $(BIN) 2>/dev/null || true
 
 clean: $(CLEAN_BINS)
 test: $(TEST_BINS)

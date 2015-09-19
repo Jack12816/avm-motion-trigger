@@ -19,29 +19,14 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <stdio.h>
-#include "password-challenge.h"
+#ifndef AVM_SESSION_H
+#define AVM_SESSION_H
 
-char* parse_challenge_res(struct response *res)
-{
-    return xml_read_char("/SessionInfo/Challenge", res);
-}
+#include "common/xml-response.h"
+#include "session/password-challenge.h"
+#include "session/password-response.h"
 
-char* passwd_challenge(const char *hostname)
-{
-    struct response res;
-    char *challenge;
+char* parse_start_session_res(struct response*);
+char* start_session(const char*, const char*, const wchar_t*);
 
-    init_response(&res);
-
-    if (perform_get_req(build_url(hostname, "/login_sid.lua"), &res) > 0) {
-        fprintf(stderr, "get_challenge::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    challenge = parse_challenge_res(&res);
-
-    free(res.ptr);
-
-    return challenge;
-}
+#endif

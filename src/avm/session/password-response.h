@@ -22,14 +22,6 @@
 #ifndef AVM_PASSWORD_RESPONSE_H
 #define AVM_PASSWORD_RESPONSE_H
 
-struct strutf16le {
-    char *ptr;
-    int len;
-};
-
-wchar_t* striso8859_1(const wchar_t*);
-struct strutf16le* strutf16le(const wchar_t*);
-char* strmd5(const unsigned char*, int);
-wchar_t* passwd_response(const wchar_t*, const wchar_t*);
+char* passwd_response(const char*, const wchar_t*);
 
 #endif

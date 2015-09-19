@@ -23,98 +23,32 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
-#include <wctype.h>
-#include <locale.h>
-#include <iconv.h>
-#include <openssl/md5.h>
+#include "../common/encoding.h"
 #include "password-response.h"
 
-wchar_t* striso8859_1(const wchar_t *str)
+char* passwd_response(const char *challenge, const wchar_t *password)
 {
-    size_t len = wcslen(str);
-    wchar_t* compatstr = malloc(sizeof(wchar_t) * len);
-
-    for (int i = 0; i < len; i++) {
-        if (str[i] > 255) {
-            compatstr[i] = 0x2e;
-        } else {
-            compatstr[i] = str[i];
-        }
-    }
-
-    return compatstr;
-}
-
-struct strutf16le* strutf16le(const wchar_t *str)
-{
-    size_t input_len = wcslen(str);
-    size_t input_byte_len = sizeof(wchar_t) * input_len;
-    size_t output_byte_len = sizeof(wchar_t) * input_len;
-
-    wchar_t* input = (wchar_t*) malloc(input_byte_len);
-    char* output = (char*) malloc(output_byte_len);
-    struct strutf16le *result = (struct strutf16le*) malloc(sizeof (strutf16le));
-    char* input_ptr = (char*) input;
-    char* output_ptr = output;
-
-    memcpy(input, str, input_byte_len);
-
-    iconv_t cd = iconv_open("UTF-16LE", "WCHAR_T");
-
-    while(input_byte_len > 0) {
-        iconv(cd, &input_ptr, &input_byte_len, &output_ptr, &output_byte_len);
-    }
-
-    result->ptr = output;
-    result->len = output_byte_len;
-
-    iconv_close(cd);
-    free(input);
-
-    return result;
-}
-
-char* strmd5(const unsigned char *str, int len)
-{
-    unsigned char output[MD5_DIGEST_LENGTH];
-    char *res = (char*) malloc(MD5_DIGEST_LENGTH + 1);
-
-    MD5(str, len, output);
-
-    for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
-        snprintf(&(res[i*2]), MD5_DIGEST_LENGTH + 1,
-                "%02x", (unsigned int) output[i]);
-    }
-
-    return res;
-}
-
-wchar_t* passwd_response(const wchar_t *challenge, const wchar_t *password)
-{
-    size_t challenge_len = wcslen(challenge);
-    size_t md5_src_len  = challenge_len + wcslen(password) + 1;
-    size_t response_len = challenge_len + 32 + 1;
-
-    wchar_t *md5_src = malloc(sizeof(wchar_t) * md5_src_len);
-    wchar_t* response = malloc(sizeof(wchar_t) * response_len);
-    wchar_t *md5_src_ptr;
-    char *md5;
+    size_t challenge_len = strlen(challenge);
+    size_t md5_src_len  = challenge_len + wcslen(password) + 2;
+    size_t response_len = challenge_len + 32 + 2;
 
     struct strutf16le *md5_src_utf16le;
+    wchar_t *md5_src = malloc(sizeof(wchar_t) * md5_src_len);
+    char* response = malloc(sizeof(char) * response_len);
+    char *md5;
 
     // Prepare md5 source (challenge-password)
-    wcscat(md5_src, challenge);
-    wcscat(md5_src, L"-");
-    md5_src_ptr = wcscat(md5_src, striso8859_1(password));
-    md5_src_utf16le = strutf16le(md5_src_ptr);
+    swprintf(md5_src, md5_src_len, L"%hs-%ls", challenge,
+            striso8859_1(password));
+
+    md5_src_utf16le = strutf16le(md5_src);
 
     // Generate the md5 hash
-    md5 = strmd5((const unsigned char *) md5_src_utf16le->ptr, md5_src_utf16le->len);
+    md5 = strmd5((const unsigned char *) md5_src_utf16le->ptr,
+            md5_src_utf16le->len);
 
     // Build the response
-    wcscat(response, challenge);
-    wcscat(response, L"-");
-    swprintf(&(response[challenge_len + 1]), response_len, L"%hs", md5);
+    snprintf(response, response_len, "%s-%s", challenge, md5);
 
     free(md5_src);
 

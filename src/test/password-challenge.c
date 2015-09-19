@@ -1,12 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <locale.h>
 #include <libxml/parser.h>
 #include <curl/curl.h>
 #include "../avm/session/password-challenge.h"
 
 int main(void)
 {
+    setlocale(LC_CTYPE, "");
+
     /*
      * This initialize the library and check potential ABI mismatches between
      * the version it was compiled for and the actual shared library used.

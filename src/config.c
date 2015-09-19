@@ -21,18 +21,33 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <wchar.h>
+#include <wctype.h>
 #include <libconfig.h>
 #include "config.h"
+
+wchar_t* strwchar_t(const char *str)
+{
+    size_t slen = strlen(str);
+    size_t outlen = sizeof(wchar_t) * slen;
+    wchar_t* out = (wchar_t*) malloc(outlen);
+
+    swprintf(out, outlen, L"%hs", str);
+
+    return out;
+}
 
 struct config get_config(const char *path)
 {
     struct config conf;
     config_t c;
+    const char *avm_passwd;
 
     config_init(&c);
 
     if (!config_read_file(&c, path)) {
-        fprintf(stderr, "\n%s:%d - %s", config_error_file(&c),
+        fwprintf(stderr, L"\n%s:%d - %s", config_error_file(&c),
                 config_error_line(&c), config_error_text(&c));
         config_destroy(&c);
         exit(EXIT_FAILURE);
@@ -43,29 +58,30 @@ struct config get_config(const char *path)
      */
     if (!config_lookup_string(&c, "hostname", &conf.avm.hostname)) {
         conf.avm.hostname = "fritz.box";
-        printf("[INFO] No hostname was configured, so we use 'fritz.box'\n");
+        fwprintf(stderr, L"[INFO] No hostname was configured, so we use 'fritz.box'\n");
     }
 
     if (!config_lookup_string(&c, "username", &conf.avm.username)) {
         conf.avm.username = "";
     }
 
-    if (!config_lookup_string(&c, "password", &conf.avm.password)) {
-        conf.avm.password = "0000";
+    if (!config_lookup_string(&c, "password", &avm_passwd)) {
+        avm_passwd = "b€är";
     }
+    conf.avm.password = (const wchar_t*) strwchar_t(avm_passwd);
 
     /*
      * Device section settings
      */
     if (!config_lookup_string(&c, "ain", &conf.device.ain)) {
-        fprintf(stderr, "[ERROR] No device ain was configured (this is mandatory)");
+        fwprintf(stderr, L"[ERROR] No device ain was configured (this is mandatory)");
         config_destroy(&c);
         exit(EXIT_FAILURE);
     }
 
     if (!config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after)) {
         conf.device.turn_off_after = 0;
-        fprintf(stderr, "%s - %s", "[INFO] No timeout for auto device turn off was configured",
+        fwprintf(stderr, L"%s - %s", "[INFO] No timeout for auto device turn off was configured",
                 "it won't turn off\n");
     }
 
@@ -74,7 +90,7 @@ struct config get_config(const char *path)
      */
     if (!config_lookup_int(&c, "light_sensor_thold", &conf.tholds.light_sensor)) {
         conf.tholds.light_sensor = 0;
-        fprintf(stderr, "%s - %s", "[INFO] No threshold for light sensor was configured",
+        fwprintf(stderr, L"%s - %s", "[INFO] No threshold for light sensor was configured",
                 "we won't take care of the ambient light\n");
     }
 
@@ -82,7 +98,7 @@ struct config get_config(const char *path)
      * Sensor ports section settings
      */
     if (!config_lookup_int(&c, "motion_sensor_gpio", &conf.sensor.motion_gpio)) {
-        fprintf(stderr, "%s%s", "[ERROR] No GPIO pin for the motion sensor was configured",
+        fwprintf(stderr, L"%s%s", "[ERROR] No GPIO pin for the motion sensor was configured",
                 "(this is mandatory)");
         config_destroy(&c);
         exit(EXIT_FAILURE);
@@ -91,7 +107,7 @@ struct config get_config(const char *path)
     if (!config_lookup_int(&c, "light_sensor_channel", &conf.sensor.light_channel)) {
         conf.sensor.light_channel = 0;
         conf.tholds.light_sensor = 0;
-        fprintf(stderr, "%s - %s", "[INFO] No channel for the light sensor on the ADC was configured",
+        fwprintf(stderr, L"%s - %s", "[INFO] No channel for the light sensor on the ADC was configured",
                 "we won't take care of the ambient light\n");
     }
 

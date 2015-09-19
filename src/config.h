@@ -26,7 +26,7 @@ struct config {
     struct config_avm {
         const char *hostname;
         const char *username;
-        const char *password;
+        const wchar_t *password;
     } avm;
     struct config_device {
         const char *ain;

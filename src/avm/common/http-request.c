@@ -20,10 +20,21 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 #include <curl/curl.h>
 #include "http-request.h"
+
+char* build_url(const char *host, const char *path)
+{
+    size_t len = sizeof(char) * (7 + strlen(host) + strlen(path) + 1);
+
+    char *scheme = "http://";
+    char *url = (char*) malloc(len);
+
+    snprintf(url, len, "%s%s%s", scheme, host, path);
+
+    return url;
+}
 
 void init_response(struct response *res)
 {
@@ -36,18 +47,6 @@ void init_response(struct response *res)
     }
 
     res->ptr[0] = '\0';
-}
-
-char* build_url(const char *host, const char *path)
-{
-    size_t len = sizeof(char) * (7 + strlen(host) + strlen(path) + 1);
-
-    char *scheme = "http://";
-    char *url = (char*) malloc(len);
-
-    snprintf(url, len, "%s%s%s", scheme, host, path);
-
-    return url;
 }
 
 size_t append_response_chunk(void *ptr, size_t size, size_t nmemb, struct response *res)

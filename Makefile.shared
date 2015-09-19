@@ -5,5 +5,5 @@ export FIND := find
 export GCC := gcc
 XML_CONF := xml2-config
 
-export CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -g
+export CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -Werror -g
 export INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lcrypto -lconfig

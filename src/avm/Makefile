@@ -1,2 +1,2 @@
-SUBDIRS := session
+SUBDIRS := common session
 include ../Makefile

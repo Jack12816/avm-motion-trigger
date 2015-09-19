@@ -19,7 +19,11 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef AVM_SESSION_H
-#define AVM_SESSION_H
+#ifndef AVM_XML_RESPONSE_H
+#define AVM_XML_RESPONSE_H
+
+#include "http-request.h"
+
+char* xml_read_char(const char*, struct response*);
 
 #endif

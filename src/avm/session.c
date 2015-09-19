@@ -20,28 +20,41 @@
  */
 
 #include <stdio.h>
-#include "password-challenge.h"
+#include <string.h>
+#include "common/http-request.h"
+#include "session.h"
 
-char* parse_challenge_res(struct response *res)
+char* parse_start_session_res(struct response *res)
 {
-    return xml_read_char("/SessionInfo/Challenge", res);
+    return xml_read_char("/SessionInfo/SID", res);
 }
 
-char* passwd_challenge(const char *hostname)
+char* start_session(const char *hostname, const char *username,
+        const wchar_t *password)
 {
+    char *challenge = passwd_challenge(hostname);
+    char *response  = passwd_response(challenge, password);
+
+    // Build the path for the URL
+    size_t path_len = 76 + strlen(username);
+    char *path = (char*) malloc(sizeof(char) * path_len);
+    snprintf(path, path_len, "/login_sid.lua?username=%s&response=%s",
+            username, response);
+
+    // Perform the request
     struct response res;
-    char *challenge;
+    char *session_id;
 
     init_response(&res);
 
-    if (perform_get_req(build_url(hostname, "/login_sid.lua"), &res) > 0) {
-        fprintf(stderr, "get_challenge::perform_get_req failed\n");
+    if (perform_get_req(build_url(hostname, path), &res) > 0) {
+        fprintf(stderr, "start_session::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 
-    challenge = parse_challenge_res(&res);
+    session_id = parse_start_session_res(&res);
 
     free(res.ptr);
 
-    return challenge;
+    return session_id;
 }

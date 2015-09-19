@@ -22,7 +22,7 @@
 #ifndef AVM_PASSWORD_CHALLENGE_H
 #define AVM_PASSWORD_CHALLENGE_H
 
-#include "../http-request.h"
+#include "../common/xml-response.h"
 
 char* parse_challenge_res(struct response*);
 char* passwd_challenge(const char*);

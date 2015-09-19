@@ -22,14 +22,13 @@
 #ifndef AVM_HTTP_REQUEST_H
 #define AVM_HTTP_REQUEST_H
 
-struct response {
+struct strutf16le {
     char *ptr;
-    size_t len;
+    int len;
 };
 
-void init_response(struct response*);
-char* build_url(const char*, const char*);
-size_t append_response_chunk(void*, size_t, size_t, struct response*);
-int perform_get_req(char*, struct response*);
+wchar_t* striso8859_1(const wchar_t*);
+struct strutf16le* strutf16le(const wchar_t*);
+char* strmd5(const unsigned char*, int);
 
 #endif

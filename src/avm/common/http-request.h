@@ -19,4 +19,19 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "session.h"
+#ifndef AVM_HTTP_REQUEST_H
+#define AVM_HTTP_REQUEST_H
+
+#include <stdlib.h>
+
+struct response {
+    char *ptr;
+    size_t len;
+};
+
+void init_response(struct response*);
+char* build_url(const char*, const char*);
+size_t append_response_chunk(void*, size_t, size_t, struct response*);
+int perform_get_req(char*, struct response*);
+
+#endif

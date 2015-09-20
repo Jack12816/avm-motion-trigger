@@ -48,6 +48,9 @@ struct config {
 /* Convert a char to a wide char */
 wchar_t* strwchar_t(const char *);
 
+/* Initialize a default config struct */
+struct config* init_config(struct config*);
+
 /* Read in a configuration from a file and return the config struct */
 struct config get_config(const char*, char);
 

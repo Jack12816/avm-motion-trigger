@@ -48,6 +48,11 @@ void replace_ain(struct config *c, char **args, size_t argc)
     if (1 == argc) {
         c->device.ain = args[0];
     }
+
+    if (0 == strlen(c->device.ain)) {
+        printf("%s\n", "No AIN was configured/given.\n");
+        exit(EXIT_FAILURE);
+    }
 }
 
 int check_config(struct config *c, char **args, size_t argc)
@@ -297,6 +302,9 @@ int main(int argc, char **argv)
     if (0 != strlen(config_file)) {
         // Config file was set, so load it
         conf = get_config(config_file, VERBOSE_QUITE);
+    } else {
+        // Init the config struct with default values
+        init_config(&conf);
     }
 
     if (0 != strlen(hostname)) {

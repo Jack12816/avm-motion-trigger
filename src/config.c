@@ -39,6 +39,21 @@ wchar_t* strwchar_t(const char *str)
     return out;
 }
 
+/* Initialize a default config struct */
+struct config* init_config(struct config *conf)
+{
+    conf->avm.hostname = "fritz.box";
+    conf->avm.username = "";
+    conf->avm.password = (const wchar_t*) strwchar_t("0000");
+    conf->device.ain = "";
+    conf->device.turn_off_after = 0;
+    conf->tholds.light_sensor = 0;
+    conf->sensor.light_channel = 0;
+    conf->tholds.light_sensor = 0;
+
+    return conf;
+}
+
 /* Read in a configuration from a file and return the config struct */
 struct config get_config(const char *path, char verbosity)
 {
@@ -46,6 +61,7 @@ struct config get_config(const char *path, char verbosity)
     config_t c;
     const char *avm_passwd;
 
+    init_config(&conf);
     config_init(&c);
 
     if (!config_read_file(&c, path)) {
@@ -59,18 +75,21 @@ struct config get_config(const char *path, char verbosity)
      * AVM section settings
      */
     if (!config_lookup_string(&c, "hostname", &conf.avm.hostname)) {
-        conf.avm.hostname = "fritz.box";
         if (verbosity >= VERBOSE_INFO) {
             fwprintf(stderr, L"[INFO] No hostname was configured, so we use 'fritz.box'\n");
         }
     }
 
     if (!config_lookup_string(&c, "username", &conf.avm.username)) {
-        conf.avm.username = "";
+        if (verbosity >= VERBOSE_DEBUG) {
+            fwprintf(stderr, L"[DEBUG] No username was configured\n");
+        }
     }
 
     if (!config_lookup_string(&c, "password", &avm_passwd)) {
-        avm_passwd = "0000";
+        if (verbosity >= VERBOSE_DEBUG) {
+            fwprintf(stderr, L"[DEBUG] No password was configured, use default one\n");
+        }
     }
     conf.avm.password = (const wchar_t*) strwchar_t(avm_passwd);
 
@@ -78,13 +97,12 @@ struct config get_config(const char *path, char verbosity)
      * Device section settings
      */
     if (!config_lookup_string(&c, "ain", &conf.device.ain)) {
-        fwprintf(stderr, L"[ERROR] No device ain was configured (this is mandatory)");
-        config_destroy(&c);
-        exit(EXIT_FAILURE);
+        if (verbosity >= VERBOSE_DEBUG) {
+            fwprintf(stderr, L"[DEBUG] No device ain was configured\n");
+        }
     }
 
     if (!config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after)) {
-        conf.device.turn_off_after = 0;
         if (verbosity >= VERBOSE_INFO) {
             fwprintf(stderr, L"%s - %s", "[INFO] No timeout for auto device turn off was configured",
                     "it won't turn off\n");
@@ -95,7 +113,6 @@ struct config get_config(const char *path, char verbosity)
      * Sensor thresholds section settings
      */
     if (!config_lookup_int(&c, "light_sensor_thold", &conf.tholds.light_sensor)) {
-        conf.tholds.light_sensor = 0;
         if (verbosity >= VERBOSE_INFO) {
             fwprintf(stderr, L"%s - %s", "[INFO] No threshold for light sensor was configured",
                     "we won't take care of the ambient light\n");
@@ -113,8 +130,6 @@ struct config get_config(const char *path, char verbosity)
     }
 
     if (!config_lookup_int(&c, "light_sensor_channel", &conf.sensor.light_channel)) {
-        conf.sensor.light_channel = 0;
-        conf.tholds.light_sensor = 0;
         if (verbosity >= VERBOSE_INFO) {
             fwprintf(stderr, L"%s - %s", "[INFO] No channel for the light sensor on the ADC was configured",
                     "we won't take care of the ambient light\n");

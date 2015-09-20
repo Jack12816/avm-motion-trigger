@@ -64,7 +64,7 @@ int switches_list(const char *hostname, const char *session_id,
     if (req_get_wr(build_url(hostname,
                     build_sw_path_woa("getswitchlist",
                         session_id)), &res) > 0) {
-        fwprintf(stderr, L"start_session::perform_get_req failed\n");
+        fwprintf(stderr, L"switches_list::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -131,7 +131,7 @@ char switch_state(const char *hostname, const char *session_id, const char *ain)
     if (req_get_wr(build_url(hostname,
                     build_sw_path_wa("getswitchstate",
                         session_id, ain)), &res) > 0) {
-        fwprintf(stderr, L"switch_name::perform_get_req failed\n");
+        fwprintf(stderr, L"switch_state::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -142,4 +142,27 @@ char switch_state(const char *hostname, const char *session_id, const char *ain)
 
     free(res.ptr);
     return SWITCH_STATE_OFF;
+}
+
+char switch_present(const char *hostname, const char *session_id, const char *ain)
+{
+    // Perform the request
+    struct response res;
+
+    init_response(&res);
+
+    if (req_get_wr(build_url(hostname,
+                    build_sw_path_wa("getswitchpresent",
+                        session_id, ain)), &res) > 0) {
+        fwprintf(stderr, L"switch_present::perform_get_req failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (0 == strcmp("1", trimcrlf(res.ptr))) {
+        free(res.ptr);
+        return SWITCH_PRESENT;
+    }
+
+    free(res.ptr);
+    return SWITCH_NOT_PRESENT;
 }

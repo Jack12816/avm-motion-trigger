@@ -30,6 +30,13 @@ int main(void)
             printf("    * Name: %s\n", switch_name(c.avm.hostname,
                         session_id, ains[i]));
 
+            if (SWITCH_PRESENT == switch_present(c.avm.hostname,
+                        session_id, ains[i])) {
+                printf("    * Present: yes (connected)\n");
+            } else {
+                printf("    * Present: no (not connected)\n");
+            }
+
             if (SWITCH_STATE_ON == switch_state(c.avm.hostname,
                         session_id, ains[i])) {
                 printf("    * State: on\n");

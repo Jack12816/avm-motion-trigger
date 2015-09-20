@@ -2,8 +2,6 @@ OBJS = $(shell $(FIND) .. -type f -name *.o)
 BINS = $(patsubst %.c,%,$(wildcard *.c))
 CLEAN_BINS = $(BINS:%=clean-%)
 
-CFLAGS += -Wno-error
-
 $(BINS): INFILE = $(@:%=%.c)
 $(BINS):
 ifeq ($(OBJS),)

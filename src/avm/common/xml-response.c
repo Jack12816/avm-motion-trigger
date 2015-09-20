@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <wchar.h>
 #include <libxml/tree.h>
 #include <libxml/parser.h>
@@ -34,6 +35,8 @@ char* xml_read_chars(const char *xpath, struct response *res)
     xmlXPathContextPtr xpathCtx;
     xmlXPathObjectPtr xpathObj;
     char *output;
+    size_t ret_len;
+    char *ret;
     const xmlChar* xpathExpr = (xmlChar*) xpath;
 
     /*
@@ -77,7 +80,12 @@ char* xml_read_chars(const char *xpath, struct response *res)
         doc, xpathObj->nodesetval->nodeTab[0]->xmlChildrenNode, 1
     );
 
-    xmlFreeDoc(doc);
+    ret_len = strlen(output) + 1;
+    ret = (char*) malloc(sizeof(char) * ret_len);
+    strncpy(ret, output, ret_len);
 
-    return output;
+    xmlFreeDoc(doc);
+    free(output);
+
+    return ret;
 }

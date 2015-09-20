@@ -25,8 +25,177 @@
 #include <wchar.h>
 #include <getopt.h>
 #include "../config.h"
+#include "../avm/session.h"
+#include "../avm/switches.h"
 
-void print_help()
+char* login(struct config *c)
+{
+    char *session_id = (char*) malloc(sizeof(char) * 17);
+    session_id = session_start(c->avm.hostname, c->avm.username,
+            c->avm.password);
+
+    if (SESSION_INVALID == session_id_chk(session_id)) {
+        printf("%s\n%s\n", "Failed to login while starting a session.",
+                "Wrong username or password.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return session_id;
+}
+
+void replace_ain(struct config *c, char **args, size_t argc)
+{
+    if (1 == argc) {
+        c->device.ain = args[0];
+    }
+}
+
+int check_config(struct config *c, char **args, size_t argc)
+{
+    char *session_id = login(c);
+    session_end(c->avm.hostname, session_id);
+    printf("Configuration is OK. (Session id was: %s)\n", session_id);
+    return EXIT_SUCCESS;
+}
+
+int list(struct config *c, char **args, size_t argc)
+{
+    char *session_id = login(c);
+    size_t max_ains = 32;
+    char* ains[max_ains];
+
+    int found = switches_list(c->avm.hostname, session_id, ains, max_ains);
+
+    if (0 == found) {
+        printf("No switches found.\n");
+        return EXIT_FAILURE;
+    }
+
+    for(short i = 0; i < found; i++) {
+
+        printf("    * Found: %s\n", ains[i]);
+        printf("        * Name: %s\n", switch_name(c->avm.hostname,
+                    session_id, ains[i]));
+
+        if (SWITCH_PRESENT == switch_present(c->avm.hostname,
+                    session_id, ains[i])) {
+            printf("        * Present: yes (connected)\n");
+        } else {
+            printf("        * Present: no (not connected)\n");
+        }
+
+        if (SWITCH_STATE_ON == switch_state(c->avm.hostname,
+                    session_id, ains[i])) {
+            printf("        * State: on\n");
+        } else {
+            printf("        * State: off\n");
+        }
+
+        if (i < found-1) {
+            printf("\n");
+        }
+    }
+
+    session_end(c->avm.hostname, session_id);
+    return EXIT_SUCCESS;
+}
+
+int present(struct config *c, char **args, size_t argc)
+{
+    replace_ain(c, args, argc);
+    char *session_id = login(c);
+
+    if (SWITCH_PRESENT == switch_present(c->avm.hostname,
+                session_id, c->device.ain)) {
+        session_end(c->avm.hostname, session_id);
+        printf("%s is present\n", c->device.ain);
+        return EXIT_SUCCESS;
+    }
+
+    session_end(c->avm.hostname, session_id);
+    printf("%s is not present\n", c->device.ain);
+    return EXIT_FAILURE;
+}
+
+int state(struct config *c, char **args, size_t argc)
+{
+    replace_ain(c, args, argc);
+    char *session_id = login(c);
+
+    if (SWITCH_STATE_ON == switch_state(c->avm.hostname,
+                session_id, c->device.ain)) {
+        session_end(c->avm.hostname, session_id);
+        printf("%s is on\n", c->device.ain);
+        return EXIT_SUCCESS;
+    }
+
+    session_end(c->avm.hostname, session_id);
+    printf("%s is off\n", c->device.ain);
+    return EXIT_FAILURE;
+}
+
+int status(struct config *c, char **args, size_t argc)
+{
+    replace_ain(c, args, argc);
+    char *session_id = login(c);
+
+    printf("%s\n", c->device.ain);
+
+    if (SWITCH_PRESENT == switch_present(c->avm.hostname,
+                session_id, c->device.ain)) {
+        printf("  * Present: yes (connected)\n");
+    } else {
+        printf("  * Present: no (not connected)\n");
+    }
+
+    if (SWITCH_STATE_ON == switch_state(c->avm.hostname,
+                session_id, c->device.ain)) {
+        printf("  * State: on\n");
+    } else {
+        printf("  * State: off\n");
+    }
+
+    session_end(c->avm.hostname, session_id);
+    return EXIT_SUCCESS;
+}
+
+int toggle(struct config *c, char **args, size_t argc)
+{
+    replace_ain(c, args, argc);
+    char *session_id = login(c);
+
+    if (SWITCH_STATE_ON == switch_toggle(c->avm.hostname,
+                session_id, c->device.ain)) {
+        printf("%s is now on\n", c->device.ain);
+    } else {
+        printf("%s is now off\n", c->device.ain);
+    }
+
+    session_end(c->avm.hostname, session_id);
+    return EXIT_SUCCESS;
+}
+
+int off(struct config *c, char **args, size_t argc)
+{
+    replace_ain(c, args, argc);
+    char *session_id = login(c);
+    switch_off(c->avm.hostname, session_id, c->device.ain);
+    printf("%s is now off\n", c->device.ain);
+    session_end(c->avm.hostname, session_id);
+    return EXIT_SUCCESS;
+}
+
+int on(struct config *c, char **args, size_t argc)
+{
+    replace_ain(c, args, argc);
+    char *session_id = login(c);
+    switch_on(c->avm.hostname, session_id, c->device.ain);
+    printf("%s is now on\n", c->device.ain);
+    session_end(c->avm.hostname, session_id);
+    return EXIT_SUCCESS;
+}
+
+void print_help(int exit_code)
 {
     printf("avmctl [OPTION] {COMMAND} ...\n");
     printf("\n");
@@ -41,8 +210,8 @@ void print_help()
     printf("Commands:\n");
     printf("  check-config      Try to start a test session and on success end it\n");
     printf("  list              List all usable actors and print some meta information about them\n");
-    printf("  present [AIN]     Check if the configured actor is present/connected\n");
-    printf("  state [AIN]       Retrieve the current state of the actor (EXIT 0 = on, EXIT_FAILURE 1 = off)\n");
+    printf("  present [AIN]     Check if the configured actor is present/connected (EXIT_SUCCESS = present, EXIT_FAILURE = not present)\n");
+    printf("  state [AIN]       Retrieve the current state of the actor (EXIT_SUCCESS = on, EXIT_FAILURE = off)\n");
     printf("  status [AIN]      Print information about presence and state of the actor\n");
     printf("  toggle [AIN]      Toggle the state of the actor\n");
     printf("  off [AIN]         Turn the actor off\n");
@@ -53,13 +222,13 @@ void print_help()
     printf("  parts from a configuration file. This is can be handy if you just want to\n");
     printf("  operate on another actor with the same credentials or on another FRITZ!Box with\n");
     printf("  the same username and password.\n");
-    exit(EXIT_SUCCESS);
+    exit(exit_code);
 }
 
 int main(int argc, char **argv)
 {
     if (1 == argc) {
-        print_help();
+        print_help(EXIT_SUCCESS);
     }
 
     int c;
@@ -67,7 +236,6 @@ int main(int argc, char **argv)
     char *hostname    = "";
     char *username    = "";
     char *password    = "";
-    char *ain         = "";
 
     while (1) {
 
@@ -93,7 +261,7 @@ int main(int argc, char **argv)
 
         switch (c) {
             case 'h':
-                print_help();
+                print_help(EXIT_SUCCESS);
                 break;
 
             case 'c':
@@ -115,16 +283,16 @@ int main(int argc, char **argv)
             case '?':
                 // getopt_long already printed an error message.
                 printf("\n");
-                print_help();
+                print_help(EXIT_FAILURE);
                 break;
 
             default:
-                print_help();
+                print_help(EXIT_SUCCESS);
                 break;
         }
     }
 
-    struct config conf;
+    static struct config conf;
 
     if (0 != strlen(config_file)) {
         // Config file was set, so load it
@@ -143,10 +311,59 @@ int main(int argc, char **argv)
         conf.avm.password = (const wchar_t*) strwchar_t(password);
     }
 
-    printf("cur hostname: %s\n", conf.avm.hostname);
-    printf("cur username: %s\n", conf.avm.username);
-    printf("cur password: %s\n", (char*)conf.avm.password);
-    printf("cur ain: %s\n", conf.device.ain);
+    int left = argc - optind;
+    char *left_args[left-1];
+    int left_i = 0, left_c = 0;
 
-    return 0;
+    struct {
+        const char *verb;
+        const int argc;
+        int (* const dispatch)(struct config *c, char **args, size_t argc);
+    } verbs[] = {
+        { "check-config", 0, check_config },
+        { "list"        , 0, list         },
+        { "present"     , 1, present      },
+        { "state"       , 1, state        },
+        { "status"      , 1, status       },
+        { "toggle"      , 1, toggle       },
+        { "off"         , 1, off          },
+        { "on"          , 1, on           },
+        {}
+    }, *verb = verbs;
+
+    if (optind < argc) {
+
+        // Check the not recognized args
+        for (; verb->verb; verb++) {
+            if (0 == strcmp(argv[optind], verb->verb)) {
+                if (--left > verb->argc) {
+                    fprintf(stderr, "Too many optional arguments for `%s` command\n",
+                            verb->verb);
+                    printf("\n");
+                    print_help(EXIT_FAILURE);
+                }
+
+                // Move all left args to a new array
+                optind++;
+                for (left_i = 0, left_c = left; left_c > 0; left_i++, --left_c) {
+                    left_args[left_i] = argv[optind+left_i];
+                }
+
+                return verb->dispatch(&conf, left_args, left);
+            }
+        }
+
+        // Unknown command was specified
+        fprintf(stderr, "Unknown command `%s` was specified\n", argv[optind]);
+        printf("\n");
+        print_help(EXIT_FAILURE);
+
+    } else {
+        // No command was specified
+        fprintf(stderr, "No command was specified\n");
+        printf("\n");
+        print_help(EXIT_FAILURE);
+    }
+
+    return EXIT_FAILURE;
 }

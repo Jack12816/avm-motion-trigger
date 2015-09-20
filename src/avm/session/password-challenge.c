@@ -20,6 +20,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <wchar.h>
 #include "password-challenge.h"
 
@@ -31,8 +32,10 @@ char* parse_challenge_res(struct response *res)
 /* Retrieve a challenge */
 char* passwd_challenge(const char *hostname)
 {
-    struct response res;
     char *challenge;
+    size_t ret_len;
+    char *ret;
+    struct response res;
 
     init_response(&res);
 
@@ -43,6 +46,12 @@ char* passwd_challenge(const char *hostname)
 
     challenge = parse_challenge_res(&res);
 
+    ret_len = strlen(challenge) + 1;
+    ret = (char*) malloc(sizeof(char) * ret_len);
+    strncpy(ret, challenge, ret_len);
+
     free(res.ptr);
-    return challenge;
+    free(challenge);
+
+    return ret;
 }

@@ -27,6 +27,7 @@
 #include <libconfig.h>
 #include "config.h"
 
+/* Convert a char to a wide char */
 wchar_t* strwchar_t(const char *str)
 {
     size_t slen = strlen(str);
@@ -38,6 +39,7 @@ wchar_t* strwchar_t(const char *str)
     return out;
 }
 
+/* Read in a configuration from a file and return the config struct */
 struct config get_config(const char *path, char verbosity)
 {
     struct config conf;

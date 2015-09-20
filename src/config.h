@@ -45,6 +45,10 @@ struct config {
     } sensor;
 };
 
+/* Convert a char to a wide char */
+wchar_t* strwchar_t(const char *);
+
+/* Read in a configuration from a file and return the config struct */
 struct config get_config(const char*, char);
 
 #endif

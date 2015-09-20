@@ -1,4 +1,4 @@
-SUBDIRS ?= avm test
+SUBDIRS ?= avm test bin
 
 BUILD_SUBDIRS := $(SUBDIRS:%=build-%)
 CLEAN_SUBDIRS := $(SUBDIRS:%=clean-%)

@@ -38,7 +38,7 @@ wchar_t* strwchar_t(const char *str)
     return out;
 }
 
-struct config get_config(const char *path)
+struct config get_config(const char *path, char verbosity)
 {
     struct config conf;
     config_t c;
@@ -58,7 +58,9 @@ struct config get_config(const char *path)
      */
     if (!config_lookup_string(&c, "hostname", &conf.avm.hostname)) {
         conf.avm.hostname = "fritz.box";
-        fwprintf(stderr, L"[INFO] No hostname was configured, so we use 'fritz.box'\n");
+        if (verbosity >= VERBOSE_INFO) {
+            fwprintf(stderr, L"[INFO] No hostname was configured, so we use 'fritz.box'\n");
+        }
     }
 
     if (!config_lookup_string(&c, "username", &conf.avm.username)) {
@@ -66,7 +68,7 @@ struct config get_config(const char *path)
     }
 
     if (!config_lookup_string(&c, "password", &avm_passwd)) {
-        avm_passwd = "b€är";
+        avm_passwd = "0000";
     }
     conf.avm.password = (const wchar_t*) strwchar_t(avm_passwd);
 
@@ -81,8 +83,10 @@ struct config get_config(const char *path)
 
     if (!config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after)) {
         conf.device.turn_off_after = 0;
-        fwprintf(stderr, L"%s - %s", "[INFO] No timeout for auto device turn off was configured",
-                "it won't turn off\n");
+        if (verbosity >= VERBOSE_INFO) {
+            fwprintf(stderr, L"%s - %s", "[INFO] No timeout for auto device turn off was configured",
+                    "it won't turn off\n");
+        }
     }
 
     /*
@@ -90,8 +94,10 @@ struct config get_config(const char *path)
      */
     if (!config_lookup_int(&c, "light_sensor_thold", &conf.tholds.light_sensor)) {
         conf.tholds.light_sensor = 0;
-        fwprintf(stderr, L"%s - %s", "[INFO] No threshold for light sensor was configured",
-                "we won't take care of the ambient light\n");
+        if (verbosity >= VERBOSE_INFO) {
+            fwprintf(stderr, L"%s - %s", "[INFO] No threshold for light sensor was configured",
+                    "we won't take care of the ambient light\n");
+        }
     }
 
     /*
@@ -107,8 +113,10 @@ struct config get_config(const char *path)
     if (!config_lookup_int(&c, "light_sensor_channel", &conf.sensor.light_channel)) {
         conf.sensor.light_channel = 0;
         conf.tholds.light_sensor = 0;
-        fwprintf(stderr, L"%s - %s", "[INFO] No channel for the light sensor on the ADC was configured",
-                "we won't take care of the ambient light\n");
+        if (verbosity >= VERBOSE_INFO) {
+            fwprintf(stderr, L"%s - %s", "[INFO] No channel for the light sensor on the ADC was configured",
+                    "we won't take care of the ambient light\n");
+        }
     }
 
     return conf;

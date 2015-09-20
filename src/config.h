@@ -22,6 +22,10 @@
 #ifndef CONFIG_H
 #define CONFIG_H
 
+#define VERBOSE_QUITE 0
+#define VERBOSE_INFO 1
+#define VERBOSE_DEBUG 2
+
 struct config {
     struct config_avm {
         const char *hostname;
@@ -41,6 +45,6 @@ struct config {
     } sensor;
 };
 
-struct config get_config(const char*);
+struct config get_config(const char*, char);
 
 #endif

@@ -22,17 +22,28 @@
 #ifndef AVM_SWITCHES_H
 #define AVM_SWITCHES_H
 
-#define SWITCH_PATH "/webservices/homeautoswitch.lua"
-#define SWITCH_STATE_ON 1
-#define SWITCH_STATE_OFF 0
-#define SWITCH_PRESENT 1
-#define SWITCH_NOT_PRESENT 0
-
 #include <stdlib.h>
+#include "switches/operations.h"
 
+/* Retrieve a list of all available switches */
 int switches_list(const char*, const char*, char* [], size_t);
+
+/* Retrieve a user defined name for a switch */
 char* switch_name(const char*, const char*, const char*);
-char switch_state(const char*, const char*, const char*);
+
+/* Check if a switch is present (connected) */
 char switch_present(const char*, const char*, const char*);
+
+/* Get the current state of switch */
+char switch_state(const char*, const char*, const char*);
+
+/* Toggle the state of a switch and retrieve the new state */
+char switch_toggle(const char*, const char*, const char*);
+
+/* Turn a switch on and retrieve the new state */
+char switch_on(const char*, const char*, const char*);
+
+/* Turn a switch off and retrieve the new state */
+char switch_off(const char*, const char*, const char*);
 
 #endif

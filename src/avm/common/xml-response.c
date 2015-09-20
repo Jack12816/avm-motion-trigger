@@ -27,7 +27,8 @@
 #include <libxml/xpathInternals.h>
 #include "xml-response.h"
 
-char* xml_read_char(const char *xpath, struct response *res)
+/* Evaluate a given XPath expression and return the resulting string */
+char* xml_read_chars(const char *xpath, struct response *res)
 {
     xmlDocPtr doc;
     xmlXPathContextPtr xpathCtx;
@@ -50,7 +51,7 @@ char* xml_read_char(const char *xpath, struct response *res)
     xpathCtx = xmlXPathNewContext(doc);
 
     if (NULL == xpathCtx) {
-        fwprintf(stderr, L"xml_read_char::xmlXPathNewContext() failed\n");
+        fwprintf(stderr, L"xml_read_chars::xmlXPathNewContext() failed\n");
         xmlFreeDoc(doc);
         return "";
     }
@@ -59,14 +60,14 @@ char* xml_read_char(const char *xpath, struct response *res)
     xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
 
     if (NULL == xpathObj) {
-        fwprintf(stderr, L"xml_read_char::xmlXPathEvalExpression() failed\n");
+        fwprintf(stderr, L"xml_read_chars::xmlXPathEvalExpression() failed\n");
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
         return "";
     }
 
     if (xpathObj->nodesetval->nodeNr < 1) {
-        fwprintf(stderr, L"xml_read_char() node not found\n");
+        fwprintf(stderr, L"xml_read_chars() node not found\n");
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
         return "";

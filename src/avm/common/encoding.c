@@ -29,6 +29,7 @@
 #include <openssl/md5.h>
 #include "encoding.h"
 
+/* Convert a wide character string to a AVM compatible one */
 wchar_t* striso8859_1(const wchar_t *str)
 {
     size_t len = wcslen(str);
@@ -45,6 +46,7 @@ wchar_t* striso8859_1(const wchar_t *str)
     return compatstr;
 }
 
+/* Convert a wide character string to UTF-16 Little Endian */
 struct strutf16le* strutf16le(const wchar_t *str)
 {
     size_t input_len = wcslen(str);
@@ -74,6 +76,7 @@ struct strutf16le* strutf16le(const wchar_t *str)
     return result;
 }
 
+/* Build for a given string a MD5 hash */
 char* strmd5(const unsigned char *str, int len)
 {
     unsigned char output[MD5_DIGEST_LENGTH];

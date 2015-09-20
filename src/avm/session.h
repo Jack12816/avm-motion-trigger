@@ -29,11 +29,14 @@
 #define INVALID_SESSION_ID "0000000000000000"
 #define SESSION_INVALID -1
 
+/* Check a given session id to be valid or not */
 short session_id_chk(const char*);
 
-char* parse_start_session_res(struct response*);
+/* Start a new session by logging in on a given host
+ * with username and password response */
 char* session_start(const char*, const char*, const wchar_t*);
 
+/* End a session on a given host with a given session id */
 void session_end(const char*, const char*);
 
 #endif

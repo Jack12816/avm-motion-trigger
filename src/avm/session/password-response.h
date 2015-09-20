@@ -22,6 +22,7 @@
 #ifndef AVM_PASSWORD_RESPONSE_H
 #define AVM_PASSWORD_RESPONSE_H
 
+/* Build a password response form a challenge and the cleartext password */
 char* passwd_response(const char*, const wchar_t*);
 
 #endif

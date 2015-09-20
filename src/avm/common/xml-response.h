@@ -24,6 +24,7 @@
 
 #include "http-request.h"
 
-char* xml_read_char(const char*, struct response*);
+/* Evaluate a given XPath expression and return the resulting string */
+char* xml_read_chars(const char*, struct response*);
 
 #endif

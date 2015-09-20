@@ -24,7 +24,7 @@
 
 #include "../common/xml-response.h"
 
-char* parse_challenge_res(struct response*);
+/* Retrieve a challenge */
 char* passwd_challenge(const char*);
 
 #endif

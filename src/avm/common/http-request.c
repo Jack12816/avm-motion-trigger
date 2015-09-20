@@ -25,6 +25,7 @@
 #include <curl/curl.h>
 #include "http-request.h"
 
+/* Build a URL from a given hostname and a given path */
 char* build_url(const char *host, const char *path)
 {
     size_t len = sizeof(char) * (7 + strlen(host) + strlen(path) + 1);
@@ -37,6 +38,7 @@ char* build_url(const char *host, const char *path)
     return url;
 }
 
+/* Initalize a empty response struct */
 void init_response(struct response *res)
 {
     res->len = 0;
@@ -67,6 +69,7 @@ size_t append_response_chunk(void *ptr, size_t size, size_t nmemb, struct respon
     return size * nmemb;
 }
 
+/* Trim carriage return's and line feed's from a given string */
 char* trimcrlf(char* str)
 {
     if (strchr(str, 0xa)) {
@@ -80,6 +83,7 @@ char* trimcrlf(char* str)
     return str;
 }
 
+/* GET request WithOut Response */
 int req_get_wor(const char *url)
 {
     CURL *curl;
@@ -109,6 +113,7 @@ int req_get_wor(const char *url)
     return 0;
 }
 
+/* GET request With Response */
 int req_get_wr(const char *url, struct response *res)
 {
     CURL *curl;

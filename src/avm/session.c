@@ -25,6 +25,7 @@
 #include "common/http-request.h"
 #include "session.h"
 
+/* Check a given session id to be valid or not */
 short session_id_chk(const char *session_id)
 {
     if (0 == strcmp(session_id, INVALID_SESSION_ID)) {
@@ -36,9 +37,11 @@ short session_id_chk(const char *session_id)
 
 char* parse_start_session_res(struct response *res)
 {
-    return xml_read_char("/SessionInfo/SID", res);
+    return xml_read_chars("/SessionInfo/SID", res);
 }
 
+/* Start a new session by logging in on a given host
+ * with username and password response */
 char* session_start(const char *hostname, const char *username,
         const wchar_t *password)
 {
@@ -69,6 +72,7 @@ char* session_start(const char *hostname, const char *username,
     return session_id;
 }
 
+/* End a session on a given host with a given session id */
 void session_end(const char *hostname, const char *session_id)
 {
     // Build the path for the URL

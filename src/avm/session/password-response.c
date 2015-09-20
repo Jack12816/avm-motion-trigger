@@ -26,6 +26,7 @@
 #include "../common/encoding.h"
 #include "password-response.h"
 
+/* Build a password response form a challenge and the cleartext password */
 char* passwd_response(const char *challenge, const wchar_t *password)
 {
     size_t challenge_len = strlen(challenge);

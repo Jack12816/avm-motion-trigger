@@ -24,66 +24,28 @@
 #include <string.h>
 #include <wchar.h>
 #include "switches.h"
-#include "common/http-request.h"
 
-/* Build switch path WithOut Ain */
-char* build_sw_path_woa(const char *command, const char *session_id)
-{
-    size_t len = 48 + strlen(command)
-        + strlen(session_id);
-    char *path = (char*) malloc(sizeof(char) * len);
-
-    snprintf(path, len, "%s?switchcmd=%s&sid=%s",
-            SWITCH_PATH, command, session_id);
-
-    return path;
-}
-
-/* Build switch path With Ain */
-char* build_sw_path_wa(const char *command,
-        const char *session_id, const char *ain)
-{
-    size_t len = 53 + strlen(command)
-        + strlen(session_id) + strlen(ain);
-    char *path = (char*) malloc(sizeof(char) * len);
-
-    snprintf(path, len, "%s?switchcmd=%s&sid=%s&ain=%s",
-            SWITCH_PATH, command, session_id, ain);
-
-    return path;
-}
-
+/* Retrieve a list of all available switches */
 int switches_list(const char *hostname, const char *session_id,
         char* ains[], size_t size)
 {
-    // Perform the request
-    struct response res;
+    char *res = req_swoa_chars(SWITCH_CMD_LIST, hostname, session_id);
 
-    init_response(&res);
-
-    if (req_get_wr(build_url(hostname,
-                    build_sw_path_woa("getswitchlist",
-                        session_id)), &res) > 0) {
-        fwprintf(stderr, L"switches_list::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (strlen(res.ptr) < 1) {
-        free(res.ptr);
+    if (0 == strlen(res)) {
+        free(res);
         return 0;
     }
 
     short i = 0;
     short len = 0;
     char *delimiter = ",";
-    char *ptr = strtok(res.ptr, delimiter);
+    char *ptr = strtok(res, delimiter);
 
     while (ptr != NULL && i < size) {
 
         len = strlen(ptr) + 1;
         ains[i] = (char*) malloc(sizeof(char) * len);
         strncpy(ains[i], ptr, len);
-        trimcrlf(ains[i]);
 
         ptr = strtok(NULL, delimiter);
 
@@ -92,77 +54,42 @@ int switches_list(const char *hostname, const char *session_id,
         }
     }
 
-    free(res.ptr);
-
+    free(res);
     return ++i;
 }
 
+/* Retrieve a user defined name for a switch */
 char* switch_name(const char *hostname, const char *session_id, const char *ain)
 {
-    // Perform the request
-    struct response res;
-
-    init_response(&res);
-
-    if (req_get_wr(build_url(hostname,
-                    build_sw_path_wa("getswitchname",
-                        session_id, ain)), &res) > 0) {
-        fwprintf(stderr, L"switch_name::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    size_t len = strlen(res.ptr) + 1;
-    char* name = (char*) malloc(sizeof(char) * len);
-    strncpy(name, res.ptr, len);
-    trimcrlf(name);
-
-    free(res.ptr);
-
-    return name;
+    return req_swa_chars(SWITCH_CMD_NAME, hostname, session_id, ain);
 }
 
-char switch_state(const char *hostname, const char *session_id, const char *ain)
-{
-    // Perform the request
-    struct response res;
-
-    init_response(&res);
-
-    if (req_get_wr(build_url(hostname,
-                    build_sw_path_wa("getswitchstate",
-                        session_id, ain)), &res) > 0) {
-        fwprintf(stderr, L"switch_state::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (0 == strcmp("1", trimcrlf(res.ptr))) {
-        free(res.ptr);
-        return SWITCH_STATE_ON;
-    }
-
-    free(res.ptr);
-    return SWITCH_STATE_OFF;
-}
-
+/* Check if a switch is present (connected) */
 char switch_present(const char *hostname, const char *session_id, const char *ain)
 {
-    // Perform the request
-    struct response res;
+    return req_swa_char(SWITCH_CMD_PRESENT, hostname, session_id, ain);
+}
 
-    init_response(&res);
+/* Get the current state of switch */
+char switch_state(const char *hostname, const char *session_id, const char *ain)
+{
+    return req_swa_char(SWITCH_CMD_STATE, hostname, session_id, ain);
+}
 
-    if (req_get_wr(build_url(hostname,
-                    build_sw_path_wa("getswitchpresent",
-                        session_id, ain)), &res) > 0) {
-        fwprintf(stderr, L"switch_present::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
-    }
+/* Toggle the state of a switch and retrieve the new state */
+char switch_toggle(const char *hostname, const char *session_id, const char *ain)
+{
+    return req_swa_char(SWITCH_CMD_TOGGLE, hostname, session_id, ain);
+}
 
-    if (0 == strcmp("1", trimcrlf(res.ptr))) {
-        free(res.ptr);
-        return SWITCH_PRESENT;
-    }
+/* Turn a switch on and retrieve the new state */
+char switch_on(const char *hostname, const char *session_id, const char *ain)
+{
+    return req_swa_char(SWITCH_CMD_ON, hostname, session_id, ain);
+}
 
-    free(res.ptr);
-    return SWITCH_NOT_PRESENT;
+/* Turn a switch off and retrieve the new state */
+char switch_off(const char *hostname, const char *session_id, const char *ain)
+{
+    return req_swa_char(SWITCH_CMD_OFF, hostname, session_id, ain);
 }

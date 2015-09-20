@@ -27,8 +27,13 @@ struct strutf16le {
     int len;
 };
 
+/* Convert a wide character string to a AVM compatible one */
 wchar_t* striso8859_1(const wchar_t*);
+
+/* Convert a wide character string to UTF-16 Little Endian */
 struct strutf16le* strutf16le(const wchar_t*);
+
+/* Build for a given string a MD5 hash */
 char* strmd5(const unsigned char*, int);
 
 #endif

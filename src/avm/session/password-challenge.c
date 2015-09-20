@@ -25,9 +25,10 @@
 
 char* parse_challenge_res(struct response *res)
 {
-    return xml_read_char("/SessionInfo/Challenge", res);
+    return xml_read_chars("/SessionInfo/Challenge", res);
 }
 
+/* Retrieve a challenge */
 char* passwd_challenge(const char *hostname)
 {
     struct response res;
@@ -43,6 +44,5 @@ char* passwd_challenge(const char *hostname)
     challenge = parse_challenge_res(&res);
 
     free(res.ptr);
-
     return challenge;
 }

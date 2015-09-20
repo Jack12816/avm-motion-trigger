@@ -27,5 +27,6 @@
 #include <stdlib.h>
 
 int switches_list(const char*, const char*, char* [], size_t);
+char* switch_name(const char*, const char*, const char*);
 
 #endif

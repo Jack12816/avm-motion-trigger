@@ -15,7 +15,6 @@ int main(void)
     char *session_id = session_start(c.avm.hostname, c.avm.username,
             c.avm.password);
 
-
     size_t max_ains = 32;
     char* ains[max_ains];
 
@@ -28,6 +27,8 @@ int main(void)
     } else {
         for(short i = 0; i < found; i++) {
             printf(" * Found: %s\n", ains[i]);
+            printf("    * Name: %s\n", switch_name(c.avm.hostname,
+                        session_id, ains[i]));
         }
     }
 

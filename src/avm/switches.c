@@ -82,7 +82,8 @@ int switches_list(const char *hostname, const char *session_id,
 
         len = strlen(ptr) + 1;
         ains[i] = (char*) malloc(sizeof(char) * len);
-        memcpy(ains[i], ptr, len);
+        strncpy(ains[i], ptr, len);
+        trimcrlf(ains[i]);
 
         ptr = strtok(NULL, delimiter);
 
@@ -94,4 +95,28 @@ int switches_list(const char *hostname, const char *session_id,
     free(res.ptr);
 
     return ++i;
+}
+
+char* switch_name(const char *hostname, const char *session_id, const char *ain)
+{
+    // Perform the request
+    struct response res;
+
+    init_response(&res);
+
+    if (req_get_wr(build_url(hostname,
+                    build_sw_path_wa("getswitchname",
+                        session_id, ain)), &res) > 0) {
+        fwprintf(stderr, L"switch_name::perform_get_req failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    size_t len = strlen(res.ptr) + 1;
+    char* name = (char*) malloc(sizeof(char) * len);
+    strncpy(name, res.ptr, len);
+    trimcrlf(name);
+
+    free(res.ptr);
+
+    return name;
 }

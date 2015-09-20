@@ -67,6 +67,17 @@ size_t append_response_chunk(void *ptr, size_t size, size_t nmemb, struct respon
     return size * nmemb;
 }
 
+void trimcrlf(char* str)
+{
+    if (strchr(str, 0xa)) {
+        *strchr(str, 0xa) = 0x0;
+    }
+
+    if (strchr(str, 0xd)) {
+        *strchr(str, 0xd) = 0x0;
+    }
+}
+
 int req_get_wor(const char *url)
 {
     CURL *curl;

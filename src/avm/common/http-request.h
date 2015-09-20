@@ -32,7 +32,7 @@ struct response {
 void init_response(struct response*);
 char* build_url(const char*, const char*);
 size_t append_response_chunk(void*, size_t, size_t, struct response*);
-void trimcrlf(char*);
+char* trimcrlf(char*);
 
 /*
  * GET request WithOut Response

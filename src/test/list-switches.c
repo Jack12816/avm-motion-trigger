@@ -29,6 +29,15 @@ int main(void)
             printf(" * Found: %s\n", ains[i]);
             printf("    * Name: %s\n", switch_name(c.avm.hostname,
                         session_id, ains[i]));
+
+            if (SWITCH_STATE_ON == switch_state(c.avm.hostname,
+                        session_id, ains[i])) {
+                printf("    * State: on\n");
+            } else {
+                printf("    * State: off\n");
+            }
+
+            printf("\n");
         }
     }
 

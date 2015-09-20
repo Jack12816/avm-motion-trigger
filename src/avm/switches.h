@@ -23,10 +23,13 @@
 #define AVM_SWITCHES_H
 
 #define SWITCH_PATH "/webservices/homeautoswitch.lua"
+#define SWITCH_STATE_ON 1
+#define SWITCH_STATE_OFF 0
 
 #include <stdlib.h>
 
 int switches_list(const char*, const char*, char* [], size_t);
 char* switch_name(const char*, const char*, const char*);
+char switch_state(const char*, const char*, const char*);
 
 #endif

@@ -120,3 +120,26 @@ char* switch_name(const char *hostname, const char *session_id, const char *ain)
 
     return name;
 }
+
+char switch_state(const char *hostname, const char *session_id, const char *ain)
+{
+    // Perform the request
+    struct response res;
+
+    init_response(&res);
+
+    if (req_get_wr(build_url(hostname,
+                    build_sw_path_wa("getswitchstate",
+                        session_id, ain)), &res) > 0) {
+        fwprintf(stderr, L"switch_name::perform_get_req failed\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (0 == strcmp("1", trimcrlf(res.ptr))) {
+        free(res.ptr);
+        return SWITCH_STATE_ON;
+    }
+
+    free(res.ptr);
+    return SWITCH_STATE_OFF;
+}

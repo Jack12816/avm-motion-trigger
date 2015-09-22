@@ -204,7 +204,7 @@ void print_help(int exit_code)
 {
     printf("avmctl [OPTION] {COMMAND} ...\n");
     printf("\n");
-    printf("Control AVM Smart Home devices.\n");
+    printf("Control AVM Smart Home switches.\n");
     printf("\n");
     printf("  -h --help         Show the available operations / arguments\n");
     printf("  -c --config       Set the path to a config file\n");

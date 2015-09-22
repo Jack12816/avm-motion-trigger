@@ -1,0 +1,105 @@
+.\" Process this file with
+.\" groff -man -Tascii avmctl.1
+.TH AVM-MOTION-TRIGGER 5 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
+.SH NAME
+avm-motion-trigger.conf \- the configuration file for the AVM Motion Trigger daemon
+.SH FORMAT
+The configuration file is managed by
+.BR "libconfig".
+All formatting rules from their standard match to ours.
+    The configuration contains parameters of the form:
+
+.I name = value;
+
+Any line starting with
+.IR "#" " or " "//" " are comments."
+All parameters which are described to be
+.IR "strings" " needs to wraped by double quotes."
+.I (name = "string";)
+    All parameters which are described to be
+.IR "integers" " needs no such wrapping. Just specify the value."
+.I (name = 0;)
+.SH DESCRIPTION
+The
+.BR "avmctl" " and the " "avm-motion-triggerd" " can consume this configuration file."
+The configuration contains multiple sections:
+.IP "AVM FRITZ!Box credentials"
+
+These parameters specify the credentials which should be used to login to a
+FRITZ!Box and start a new session.
+
+.B "hostname"
+
+    The hostname/ip[:port] of the fritzbox without protocol scheme or URI paths, by default
+.IR "fritz.box".
+This value is a"
+.IR "string".
+
+.B "username"
+
+    The username of the fritzbox which is able to perform smart home management.
+    According to the documentation from AVM this setting can be empty, by default empty.
+This value is a"
+.IR "string".
+
+.B "password"
+
+    The plaintext password of the fritzbox, by default
+.IR "0000" ". This value is a"
+.IR "string".
+
+.IP "Device configuration"
+
+.B "ain"
+
+    The Actor Identification Number of the AVM Smart Switch to control.
+    The format of the AIN is
+.IR "FF:FF:FF:FF:FF:FF" ". This value is a"
+.IR "string".
+    This parameter will specify be the default actor for
+.BR "avmctl".
+
+.B "turn_device_off_after"
+
+    Turn off the device after n seconds (eg. 10 minutes).
+    0 will disable automatic turn off.  This parameter is
+.I ignored by
+.BR "avmctl".
+    This value is a
+.IR "integer".
+
+.IP "Sensor thresholds"
+
+.B "light_sensor_thold"
+
+    The daemon takes care of a PIR motion trigger if the value of the light is
+    below the specified threshold. 0 will disable the light sensor check.
+    With a 10-bit ADC (eg. MCP3008) the range is 0-1023.  This parameter is
+.I ignored by
+.BR "avmctl".
+    This value is a
+.IR "integer".
+
+.IP "Sensor ports"
+
+.B "motion_sensor_gpio"
+
+    Specify a GPIO pin for the PIR motion sensor. The daemon assumes a state
+    change from LOW to HIGH represents a recognized motion. This parameter is
+.I ignored by
+.BR "avmctl".
+    This value is a
+.IR "integer".
+
+.B "light_sensor_channel"
+
+    The daemon assumes to read the light level from a MCP3008 which is connected
+    to the SPI bus. With this setting you can configure which channel of the chip
+    will be read out.  This parameter is
+.I ignored by
+.BR "avmctl".
+    This value is a
+.IR "integer".
+
+.SH AUTHOR
+Hermann Mayer <jack@jity.de>

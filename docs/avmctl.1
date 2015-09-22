@@ -1,0 +1,49 @@
+.\" Process this file with
+.\" groff -man -Tascii avmctl.1
+.TH AVMCTL 1 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
+.SH NAME
+avmctl \- Control AVM Smart Home switches
+.SH SYNOPSIS
+.B avmctl
+[OPTION] {COMMAND} ...
+.SH DESCRIPTION
+.B avmctl
+helps you to control your AVM Smart Home switches like the AVM FRITZ!Powerline
+546E.  These switches can be listed, inspected and last but not least turned on
+and off. You could use this application from a simple Bash script.
+.SH OPTIONS
+The following options are understood:
+.IP "-h --help"
+Show the available operations / arguments
+.IP "-c --config <file>"
+Set the path to a config file
+.IP "-H --host"
+Set a host for the operations (overwrites config host)
+.IP "-u --user"
+Set a username for session (overwrites config username)
+.IP "-p --password"
+Set a password for the session (overwrites config password)
+.SH COMMANDS
+.IP "check-config"
+Try to start a test session and on success end it
+.IP "list"
+List all usable actors and print some meta information about them
+.IP "present [AIN]"
+heck if the configured actor is present/connected (EXIT_SUCCESS = present, EXIT_FAILURE = not present)
+.IP "state [AIN]"
+etrieve the current state of the actor (EXIT_SUCCESS = on, EXIT_FAILURE = off)
+.IP "status [AIN]"
+rint information about presence and state of the actor
+.IP "toggle [AIN]"
+oggle the state of the actor
+.IP "off [AIN]"
+Turn the actor off
+.IP "on [AIN]"
+Turn the actor on
+.SH COMMON HINTS
+All configuration arguments (-H, -u, -p and any [AIN]) overwrites their counter
+parts from a configuration file. This is can be handy if you just want to
+operate on another actor with the same credentials or on another FRITZ!Box with
+the same username and password.
+.SH AUTHOR
+Hermann Mayer <jack@jity.de>

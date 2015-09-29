@@ -9,7 +9,7 @@ int main(void)
     setlocale(LC_CTYPE, "");
 
     const char *config_file = "avm-motion-trigger.conf";
-    struct config c = get_config(config_file, VERBOSE_QUITE);
+    struct config c = get_config(config_file);
 
     printf("   avm.hostname: %s\n", c.avm.hostname);
     printf("   avm.username: %s\n", c.avm.username);

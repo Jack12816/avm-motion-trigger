@@ -301,7 +301,7 @@ int main(int argc, char **argv)
 
     if (0 != strlen(config_file)) {
         // Config file was set, so load it
-        conf = get_config(config_file, VERBOSE_QUITE);
+        conf = get_config(config_file);
     } else {
         // Init the config struct with default values
         init_config(&conf);

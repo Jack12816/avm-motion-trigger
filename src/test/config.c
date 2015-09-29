@@ -12,7 +12,7 @@ int main(void)
     const char *config_file = "avm-motion-trigger.conf";
     struct config c;
 
-    c = get_config(config_file, VERBOSE_QUITE);
+    c = get_config(config_file);
 
     wprintf(L"         avm.hostname: %s\n", c.avm.hostname);
     wprintf(L"         avm.username: %s\n", c.avm.username);

@@ -21,12 +21,82 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
 #include <string.h>
 #include <wchar.h>
 #include <getopt.h>
+#include <sys/stat.h>
+#include "../utils/pidfile.h"
 #include "../utils/config.h"
 #include "../avm/session.h"
 #include "../avm/switches.h"
+
+static const char *pidfile = "/run/avm-motion-triggerd.pid";
+
+void detect_motions(struct config *conf)
+{
+    printf("Started watching for motions..\n");
+
+    while (1) {
+        sleep(1);
+    }
+}
+
+void handle_signal(int signo)
+{
+    if (SIGINT == signo || SIGTERM == signo) {
+        pidfile_remove(pidfile);
+        exit(EXIT_SUCCESS);
+    }
+}
+
+void daemonize()
+{
+    pid_t pid;
+
+    // Fork off the parent process
+    pid = fork();
+
+    // An error occurred
+    if (pid < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    // Success: Let the parent terminate
+    if (pid > 0) {
+        exit(EXIT_SUCCESS);
+    }
+
+    // On success: The child process becomes session leader
+    if (setsid() < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    // Fork off for the second time
+    pid = fork();
+
+    // An error occurred
+    if (pid < 0) {
+        exit(EXIT_FAILURE);
+    }
+
+    // Success: Let the parent terminate
+    if (pid > 0) {
+        exit(EXIT_SUCCESS);
+    }
+
+    // Set new file permissions
+    umask(0);
+
+    // Change the working directory to the root directory
+    chdir("/");
+
+    // Close all open file descriptors
+    for (int i = sysconf(_SC_OPEN_MAX); i > 0; i--) {
+        close(i);
+    }
+}
 
 void print_help(int exit_code)
 {
@@ -61,13 +131,13 @@ int main(int argc, char **argv)
             {0, 0, 0, 0}
         };
 
-        /* getopt_long stores the option index here. */
+        // getopt_long stores the option index here.
         int option_index = 0;
 
         c = getopt_long(argc, argv, "hfc:",
                 long_options, &option_index);
 
-        /* Detect the end of the options. */
+        // Detect the end of the options.
         if (c == -1) {
             break;
         }
@@ -96,8 +166,32 @@ int main(int argc, char **argv)
         }
     }
 
-    printf("foreground: %d\n", foreground);
-    printf("config_file: %s\n", config_file);
+    pid_t pid;
+
+    if (0 != (pid = pidfile_check(pidfile))) {
+        fprintf(stderr, "A instance of avm-motion-triggerd (%d) is already running\n",
+                pid);
+        exit(EXIT_FAILURE);
+    }
+
+    static struct config conf;
+    conf = get_config(config_file);
+    validate_config(&conf);
+
+    // Run as daemon if we should
+    if (0 == foreground) {
+        daemonize();
+    }
+
+    // Write a pidfile for the current daemon process
+    pidfile_write(pidfile);
+
+    // Bind the signal handler
+    signal(SIGINT, handle_signal);
+    signal(SIGTERM, handle_signal);
+
+    // Call the business logic loop
+    detect_motions(&conf);
 
     return EXIT_SUCCESS;
 }

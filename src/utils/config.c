@@ -60,7 +60,7 @@ struct config* init_config(struct config *conf)
 }
 
 /* Read in a configuration from a file and return the config struct */
-struct config get_config(const char *path, char verbosity)
+struct config get_config(const char *path)
 {
     struct config conf;
     config_t c;
@@ -79,80 +79,87 @@ struct config get_config(const char *path, char verbosity)
     /*
      * AVM section settings
      */
-    if (!config_lookup_string(&c, "hostname", &conf.avm.hostname)) {
-        if (verbosity >= VERBOSE_INFO) {
-            fwprintf(stderr, L"[INFO] No hostname was configured, so we use 'fritz.box'\n");
-        }
-    }
-
-    if (!config_lookup_string(&c, "username", &conf.avm.username)) {
-        if (verbosity >= VERBOSE_DEBUG) {
-            fwprintf(stderr, L"[DEBUG] No username was configured\n");
-        }
-    }
-
-    if (!config_lookup_string(&c, "password", &avm_passwd)) {
-        if (verbosity >= VERBOSE_DEBUG) {
-            fwprintf(stderr, L"[DEBUG] No password was configured, use default one\n");
-        }
-    }
+    config_lookup_string(&c, "hostname", &conf.avm.hostname);
+    config_lookup_string(&c, "username", &conf.avm.username);
+    config_lookup_string(&c, "password", &avm_passwd);
     conf.avm.password = (const wchar_t*) strwchar_t(avm_passwd);
 
     /*
      * Device section settings
      */
-    if (!config_lookup_string(&c, "ain", &conf.device.ain)) {
-        if (verbosity >= VERBOSE_DEBUG) {
-            fwprintf(stderr, L"[DEBUG] No device ain was configured\n");
-        }
-    }
-
-    if (!config_lookup_string(&c, "actor_command", &conf.device.actor_command)) {
-        if (verbosity >= VERBOSE_DEBUG) {
-            fwprintf(stderr, L"[DEBUG] No actor command was configured\n");
-        }
-    }
-
-    if (!config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after)) {
-        if (verbosity >= VERBOSE_INFO) {
-            fwprintf(stderr, L"%s - %s", "[INFO] No timeout for auto device turn off was configured",
-                    "it won't turn off\n");
-        }
-    }
+    config_lookup_string(&c, "ain", &conf.device.ain);
+    config_lookup_string(&c, "actor_command", &conf.device.actor_command);
+    config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after);
 
     /*
      * Sensor thresholds section settings
      */
-    if (!config_lookup_int(&c, "light_sensor_thold", &conf.tholds.light_sensor)) {
-        if (verbosity >= VERBOSE_INFO) {
-            fwprintf(stderr, L"%s - %s", "[INFO] No threshold for light sensor was configured",
-                    "we won't take care of the ambient light\n");
-        }
-    }
-
-    if (!config_lookup_int(&c, "motion_sensor_locktime", &conf.tholds.motion_locktime)) {
-        if (verbosity >= VERBOSE_INFO) {
-            fwprintf(stderr, L"%s - %s", "[INFO] No sensor lock time was configured",
-                    "we won't prevent jitter\n");
-        }
-    }
+    config_lookup_int(&c, "light_sensor_thold", &conf.tholds.light_sensor);
+    config_lookup_int(&c, "motion_sensor_locktime", &conf.tholds.motion_locktime);
 
     /*
      * Sensor ports section settings
      */
-    if (!config_lookup_int(&c, "motion_sensor_gpio", &conf.sensor.motion_gpio)) {
-        if (verbosity >= VERBOSE_INFO) {
-            fwprintf(stderr, L"%s%s", "[ERROR] No GPIO pin for the motion sensor was configured",
-                    "(this is mandatory)");
-        }
-    }
-
-    if (!config_lookup_int(&c, "light_sensor_channel", &conf.sensor.light_channel)) {
-        if (verbosity >= VERBOSE_INFO) {
-            fwprintf(stderr, L"%s - %s", "[INFO] No channel for the light sensor on the ADC was configured",
-                    "we won't take care of the ambient light\n");
-        }
-    }
+    config_lookup_int(&c, "motion_sensor_gpio", &conf.sensor.motion_gpio);
+    config_lookup_int(&c, "light_sensor_channel", &conf.sensor.light_channel);
 
     return conf;
+}
+
+/* Validate a given config struct */
+void validate_config(struct config *conf)
+{
+    int err_cnt = 0;
+
+    if (0 == strcmp("", conf->device.ain)) {
+        fprintf(stderr, "[ERR] No actor identification number (ain) was configured.\n");
+        err_cnt++;
+    }
+
+    if (0 != strcmp("on", conf->device.actor_command) &&
+        0 != strcmp("off", conf->device.actor_command) &&
+        0 != strcmp("toggle", conf->device.actor_command)) {
+        fprintf(stderr, "%s [%s].\n", "[ERR] Actor command (actor_command) is none of",
+                "on, off, toggle");
+        err_cnt++;
+    }
+
+    if (conf->device.turn_off_after < 0) {
+        fprintf(stderr, "%s %s.\n", "[ERR] Device turn off timeout (turn_device_off_after)",
+                "needs to be greater or equal zero");
+        err_cnt++;
+    }
+
+    if (conf->tholds.light_sensor < 0) {
+        fprintf(stderr, "%s %s.\n", "[ERR] Light sensor threshold (light_sensor_thold)",
+                "needs to be greater or equal zero");
+        err_cnt++;
+    }
+
+    if (conf->tholds.motion_locktime < 0) {
+        fprintf(stderr, "%s %s.\n", "[ERR] Motion sensor lock time (motion_sensor_locktime)",
+                "needs to be greater or equal zero");
+        err_cnt++;
+    }
+
+    if (conf->sensor.motion_gpio <= 0) {
+        fprintf(stderr, "%s %s.\n", "[ERR] Motion sensor GPIO port (motion_sensor_gpio)",
+                "needs to be greater than zero");
+        err_cnt++;
+    }
+
+    if (conf->sensor.light_channel < 0) {
+        fprintf(stderr, "%s %s.\n", "[ERR] Light sensor SPI channel (light_sensor_channel)",
+                "needs to be greater or equal zero");
+        err_cnt++;
+    }
+
+    if (err_cnt > 0) {
+        if (err_cnt > 1) {
+            fprintf(stderr, "[ERR] Found %d configuration errors.\n", err_cnt);
+        } else {
+            fprintf(stderr, "[ERR] Found one configuration error.\n");
+        }
+        exit(EXIT_FAILURE);
+    }
 }

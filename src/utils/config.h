@@ -22,10 +22,6 @@
 #ifndef UTILS_CONFIG_H
 #define UTILS_CONFIG_H
 
-#define VERBOSE_QUITE 0
-#define VERBOSE_INFO 1
-#define VERBOSE_DEBUG 2
-
 struct config {
     struct config_avm {
         const char *hostname;
@@ -54,6 +50,9 @@ wchar_t* strwchar_t(const char *);
 struct config* init_config(struct config*);
 
 /* Read in a configuration from a file and return the config struct */
-struct config get_config(const char*, char);
+struct config get_config(const char*);
+
+/* Validate a given config struct */
+void validate_config(struct config*);
 
 #endif

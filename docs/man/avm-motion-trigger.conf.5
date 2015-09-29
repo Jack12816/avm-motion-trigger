@@ -59,13 +59,29 @@ This value is a"
     This parameter will specify be the default actor for
 .BR "avmctl".
 
-.B "turn_device_off_after"
+.B "actor_command"
 
-    Turn off the device after n seconds (eg. 10 minutes).
-    0 will disable automatic turn off.  This parameter is
+    The specified command will be send to the actor in case a motion
+    was detected. Available commands are:
+.RI "`" "on" "`, `" "off" "`, `" "toggle" "`."
+    Defaults to
+.RI "`" "on" "`."
+This parameter is
 .I ignored by
 .BR "avmctl".
     This value is a
+.IR "string".
+
+.B "turn_device_off_after"
+
+    Turn off the device after n seconds (eg. 10 minutes).
+    Specifying
+.IR "0" " will disable automatic turn off. Defaults to "
+.IR "0".
+    This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
 .IR "integer".
 
 .IP "Sensor thresholds"
@@ -74,10 +90,24 @@ This value is a"
 
     The daemon takes care of a PIR motion trigger if the value of the light is
     below the specified threshold. 0 will disable the light sensor check.
-    With a 10-bit ADC (eg. MCP3008) the range is 0-1023.  This parameter is
+    With a 10-bit ADC (eg. MCP3008) the range is 0-1023.
+    This parameter is
 .I ignored by
 .BR "avmctl".
-    This value is a
+This value is a
+.IR "integer".
+
+.B "motion_sensor_locktime"
+
+    If you set the turn_device_off_after parameter to 0 you probably want
+    to build a toggle-by-motion setup. In this case it is advisable to specify
+    a time range which prevent jitter triggering. So no action is performed
+    for n seconds after a motion was detected. Defaults to
+.IR "30" " seconds."
+    This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
 .IR "integer".
 
 .IP "Sensor ports"
@@ -85,20 +115,21 @@ This value is a"
 .B "motion_sensor_gpio"
 
     Specify a GPIO pin for the PIR motion sensor. The daemon assumes a state
-    change from LOW to HIGH represents a recognized motion. This parameter is
+    change from LOW to HIGH represents a recognized motion.
+    This parameter is
 .I ignored by
 .BR "avmctl".
-    This value is a
+This value is a
 .IR "integer".
 
 .B "light_sensor_channel"
 
     The daemon assumes to read the light level from a MCP3008 which is connected
     to the SPI bus. With this setting you can configure which channel of the chip
-    will be read out.  This parameter is
+    will be read out. This parameter is
 .I ignored by
 .BR "avmctl".
-    This value is a
+This value is a
 .IR "integer".
 
 .SH AUTHOR

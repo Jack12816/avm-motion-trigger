@@ -45,11 +45,16 @@ struct config* init_config(struct config *conf)
     conf->avm.hostname = "fritz.box";
     conf->avm.username = "";
     conf->avm.password = (const wchar_t*) strwchar_t("0000");
+
     conf->device.ain = "";
+    conf->device.actor_command = "on";
     conf->device.turn_off_after = 0;
+
     conf->tholds.light_sensor = 0;
+    conf->tholds.motion_locktime = 30;
+
+    conf->sensor.motion_gpio = 0;
     conf->sensor.light_channel = 0;
-    conf->tholds.light_sensor = 0;
 
     return conf;
 }
@@ -102,6 +107,12 @@ struct config get_config(const char *path, char verbosity)
         }
     }
 
+    if (!config_lookup_string(&c, "actor_command", &conf.device.actor_command)) {
+        if (verbosity >= VERBOSE_DEBUG) {
+            fwprintf(stderr, L"[DEBUG] No actor command was configured\n");
+        }
+    }
+
     if (!config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after)) {
         if (verbosity >= VERBOSE_INFO) {
             fwprintf(stderr, L"%s - %s", "[INFO] No timeout for auto device turn off was configured",
@@ -119,14 +130,21 @@ struct config get_config(const char *path, char verbosity)
         }
     }
 
+    if (!config_lookup_int(&c, "motion_sensor_locktime", &conf.tholds.motion_locktime)) {
+        if (verbosity >= VERBOSE_INFO) {
+            fwprintf(stderr, L"%s - %s", "[INFO] No sensor lock time was configured",
+                    "we won't prevent jitter\n");
+        }
+    }
+
     /*
      * Sensor ports section settings
      */
     if (!config_lookup_int(&c, "motion_sensor_gpio", &conf.sensor.motion_gpio)) {
-        fwprintf(stderr, L"%s%s", "[ERROR] No GPIO pin for the motion sensor was configured",
-                "(this is mandatory)");
-        config_destroy(&c);
-        exit(EXIT_FAILURE);
+        if (verbosity >= VERBOSE_INFO) {
+            fwprintf(stderr, L"%s%s", "[ERROR] No GPIO pin for the motion sensor was configured",
+                    "(this is mandatory)");
+        }
     }
 
     if (!config_lookup_int(&c, "light_sensor_channel", &conf.sensor.light_channel)) {

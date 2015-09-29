@@ -34,10 +34,12 @@ struct config {
     } avm;
     struct config_device {
         const char *ain;
+        const char *actor_command;
         int turn_off_after;
     } device;
     struct config_tholds {
         int light_sensor;
+        int motion_locktime;
     } tholds;
     struct config_sensor {
         int motion_gpio;

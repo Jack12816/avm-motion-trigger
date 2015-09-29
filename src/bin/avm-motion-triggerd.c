@@ -24,7 +24,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <getopt.h>
-#include "../config.h"
+#include "../utils/config.h"
 #include "../avm/session.h"
 #include "../avm/switches.h"
 
@@ -43,8 +43,61 @@ void print_help(int exit_code)
 int main(int argc, char **argv)
 {
     if (1 == argc) {
-        print_help(EXIT_SUCCESS);
+        fprintf(stderr, "No configuration file was specified\n");
+        printf("\n");
+        print_help(EXIT_FAILURE);
     }
+
+    int c;
+    int foreground = 0;
+    char *config_file = "";
+
+    while (1) {
+
+        static struct option long_options[] = {
+            {"help",       no_argument,       0, 'h'},
+            {"config",     required_argument, 0, 'c'},
+            {"foreground", no_argument,       0, 'f'},
+            {0, 0, 0, 0}
+        };
+
+        /* getopt_long stores the option index here. */
+        int option_index = 0;
+
+        c = getopt_long(argc, argv, "hfc:",
+                long_options, &option_index);
+
+        /* Detect the end of the options. */
+        if (c == -1) {
+            break;
+        }
+
+        switch (c) {
+            case 'h':
+                print_help(EXIT_SUCCESS);
+                break;
+
+            case 'c':
+                config_file = optarg;
+                break;
+
+            case 'f':
+                foreground = 1;
+                break;
+
+            case '?':
+                // getopt_long already printed an error message.
+                printf("\n");
+                print_help(EXIT_FAILURE);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    printf("foreground: %d\n", foreground);
+    printf("config_file: %s\n", config_file);
 
     return EXIT_SUCCESS;
 }

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Hermann Mayer
  *
- * Config processing interface
+ * Project utilities
  *
  * This file is part of avm-motion-trigger.
  *
@@ -19,8 +19,8 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef UTILS_CONFIG_H
+#define UTILS_CONFIG_H
 
 #define VERBOSE_QUITE 0
 #define VERBOSE_INFO 1

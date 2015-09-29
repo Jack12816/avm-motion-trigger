@@ -3,7 +3,7 @@
 #include <wchar.h>
 #include <string.h>
 #include <locale.h>
-#include "../config.h"
+#include "../utils/config.h"
 
 int main(void)
 {

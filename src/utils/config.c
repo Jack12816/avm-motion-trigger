@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Hermann Mayer
  *
- * Config processing interface
+ * Project utilities
  *
  * This file is part of avm-motion-trigger.
  *

@@ -24,7 +24,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <getopt.h>
-#include "../config.h"
+#include "../utils/config.h"
 #include "../avm/session.h"
 #include "../avm/switches.h"
 

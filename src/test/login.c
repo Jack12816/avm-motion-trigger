@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <locale.h>
-#include "../config.h"
+#include "../utils/config.h"
 #include "../avm/session.h"
 
 int main(void)

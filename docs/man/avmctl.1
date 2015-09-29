@@ -1,16 +1,20 @@
 .\" Process this file with
 .\" groff -man -Tascii avmctl.1
 .TH AVMCTL 1 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
+
 .SH NAME
 avmctl \- Control AVM Smart Home switches
+
 .SH SYNOPSIS
 .B avmctl
 [OPTION] {COMMAND} ...
+
 .SH DESCRIPTION
 .B avmctl
 helps you to control your AVM Smart Home switches like the AVM FRITZ!Powerline
 546E.  These switches can be listed, inspected and last but not least turned on
 and off. You could use this application from a simple Bash script.
+
 .SH OPTIONS
 The following options are understood:
 .IP "-h --help"
@@ -23,6 +27,7 @@ Set a host for the operations (overwrites config host)
 Set a username for session (overwrites config username)
 .IP "-p --password"
 Set a password for the session (overwrites config password)
+
 .SH COMMANDS
 .IP "check-config"
 Try to start a test session and on success end it
@@ -40,10 +45,12 @@ oggle the state of the actor
 Turn the actor off
 .IP "on [AIN]"
 Turn the actor on
+
 .SH COMMON HINTS
 All configuration arguments (-H, -u, -p and any [AIN]) overwrites their counter
 parts from a configuration file. This is can be handy if you just want to
 operate on another actor with the same credentials or on another FRITZ!Box with
 the same username and password.
+
 .SH AUTHOR
 Hermann Mayer <jack@jity.de>

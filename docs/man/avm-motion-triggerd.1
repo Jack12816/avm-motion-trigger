@@ -1,0 +1,36 @@
+.\" Process this file with
+.\" groff -man -Tascii avm-motion-triggerd.1
+.TH AVM-MOTION-TRIGGERD 1 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
+.SH NAME
+avm-motion-triggerd \- Watch for motions and trigger actions on AVM Smart Home switches
+.SH SYNOPSIS
+.B avm-motion-triggerd
+[OPTION]
+
+.SH DESCRIPTION
+.B avm-motion-triggerd
+checks in small intervals for motion detection events on a configured GPIO
+port. When a motion is detected the daemon will fire an action to a configured
+Smart Home actor (AVM). The configuration allows you to model various usecases.
+You could turn a light on, wait for n seconds and automatically turn it off
+afterwards, when a motion is triggered. Another use case could be: When a
+motion is detected, toggle the Smart Home actor state.
+
+.SH OPTIONS
+The following options are understood:
+.IP "-h --help"
+Show the available arguments
+.IP "-c --config <file>"
+Set the path to a config file
+.IP "-f --foreground"
+Keep the daemon running in foreground
+
+.SH FILES
+.I avm-motion-trigger.conf
+.RS
+The daemon needs a configuration file. See
+.BR avm-motion-trigger.conf (5)
+for further details.
+
+.SH AUTHOR
+Hermann Mayer <jack@jity.de>

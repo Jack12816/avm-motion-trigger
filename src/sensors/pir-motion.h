@@ -22,6 +22,16 @@
 #ifndef SENSORS_PIR_MOTION_H
 #define SENSORS_PIR_MOTION_H
 
+#include <stdint.h>
 #include <bcm2835.h>
+
+/* Initialize the PIR motion detection sensor on a given GPIO pin, 0 on success */
+int pirmtn_init(uint8_t);
+
+/* Check for a detection, 0 if nothing was found, 1 motion detected */
+int pirmtn_detected();
+
+/* Close PIR motion detection sensor connection */
+void pirmtn_close();
 
 #endif

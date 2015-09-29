@@ -3,3 +3,4 @@
 *.o
 *.bin
 /src/bin/avmctl
+/src/bin/avm-motion-triggerd

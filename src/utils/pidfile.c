@@ -27,7 +27,7 @@
 #include "pidfile.h"
 
 /* Reads the specified pidfile and returns the read pid. 0 on errors. */
-int pidfile_read(char *pidfile)
+int pidfile_read(const char *pidfile)
 {
     FILE *file;
     int pid;
@@ -43,11 +43,11 @@ int pidfile_read(char *pidfile)
 }
 
 /* Check if the process already exists. If so 1 is returned, otherwise 0. */
-int pidfile_check(char *pidfile)
+int pidfile_check(const char *pidfile)
 {
     int pid = pidfile_read(pidfile);
 
-    if ((!pid) || (pid == getpid ())) {
+    if (!pid) {
         return 0;
     }
 
@@ -59,7 +59,7 @@ int pidfile_check(char *pidfile)
 }
 
 /* Writes the pid to the specified file. 0 on errors, otherwise the pid. */
-int pidfile_write(char *pidfile)
+int pidfile_write(const char *pidfile)
 {
     FILE *file;
     int fd;
@@ -88,7 +88,7 @@ int pidfile_write(char *pidfile)
 
     fflush(file);
 
-    if (flock(fd, LOCK_UN) == -1) {
+    if (-1 == flock(fd, LOCK_UN)) {
         printf("Can't unlock pidfile %s.\n", pidfile);
         close(fd);
         return 0;
@@ -100,7 +100,7 @@ int pidfile_write(char *pidfile)
 }
 
 /* Remove the the specified file. The result from unlink(2) is returned */
-int pidfile_remove(char *pidfile)
+int pidfile_remove(const char *pidfile)
 {
     return unlink(pidfile);
 }

@@ -23,15 +23,15 @@
 #define UTILS_PIDFILE_H
 
 /* Reads the specified pidfile and returns the read pid. 0 on errors. */
-int pidfile_read(char*);
+int pidfile_read(const char*);
 
 /* Check if the process already exists. If so 1 is returned, otherwise 0. */
-int pidfile_check(char*);
+int pidfile_check(const char*);
 
 /* Writes the pid to the specified file. 0 on errors, otherwise the pid. */
-int pidfile_write(char*);
+int pidfile_write(const char*);
 
 /* Remove the the specified file. The result from unlink(2) is returned */
-int pidfile_remove(char*);
+int pidfile_remove(const char*);
 
 #endif

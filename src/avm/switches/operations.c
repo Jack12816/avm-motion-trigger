@@ -61,36 +61,36 @@ char* build_sw_path(const char *command, const char *session_id, size_t size, ..
     return path;
 }
 
-char response_char(struct response *res)
+char response_char(struct response res)
 {
-    if (0 == strcmp("1", trimcrlf(res->ptr))) {
-        free(res->ptr);
+    if (0 == strcmp("1", trimcrlf(res.ptr))) {
+        free(res.ptr);
         return SWITCH_UNVRSL_ON;
     }
 
-    free(res->ptr);
+    free(res.ptr);
     return SWITCH_UNVRSL_OFF;
 }
 
-char* response_str(struct response *res)
+char* response_str(struct response res)
 {
-    size_t len = strlen(res->ptr) + 1;
+    size_t len = strlen(res.ptr) + 1;
     char* str = (char*) malloc(sizeof(char) * len);
-    strncpy(str, res->ptr, len);
+    strncpy(str, res.ptr, len);
     trimcrlf(str);
 
-    free(res->ptr);
+    free(res.ptr);
     return str;
 }
 
-struct response* req_sw(const char *command, const char *url)
+struct response req_sw(const char *command, const char *url)
 {
     // Perform the request
-    struct response *res = (struct response*) malloc(sizeof(struct response));
+    struct response res;
 
-    init_response(res);
+    init_response(&res);
 
-    if (req_get_wr(url, res) > 0) {
+    if (req_get_wr(url, &res) > 0) {
         utlog(LOG_ERR, "AVM: %s::req_get_wr failed\n", command);
         exit(EXIT_FAILURE);
     }

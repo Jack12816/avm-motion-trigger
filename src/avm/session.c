@@ -23,7 +23,7 @@
 #include <string.h>
 #include <wchar.h>
 #include "../utils/logger.h"
-#include "common/http-request.h"
+#include "utils/http-request.h"
 #include "session.h"
 
 /* Check a given session id to be valid or not */

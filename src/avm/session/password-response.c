@@ -23,7 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <wchar.h>
-#include "../common/encoding.h"
+#include "../utils/encoding.h"
 #include "password-response.h"
 
 /* Build a password response form a challenge and the cleartext password */

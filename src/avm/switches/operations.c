@@ -25,7 +25,7 @@
 #include <string.h>
 #include <wchar.h>
 #include "../../utils/logger.h"
-#include "../common/http-request.h"
+#include "../utils/http-request.h"
 #include "operations.h"
 
 /* Build switch path, all additional params will be in pairs of key=value */

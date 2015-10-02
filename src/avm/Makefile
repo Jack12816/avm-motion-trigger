@@ -1,2 +1,2 @@
-SUBDIRS := common session switches
+SUBDIRS := utils session switches
 include ../Makefile

@@ -22,7 +22,7 @@
 #ifndef AVM_SESSION_H
 #define AVM_SESSION_H
 
-#include "common/xml-response.h"
+#include "utils/xml-response.h"
 #include "session/password-challenge.h"
 #include "session/password-response.h"
 

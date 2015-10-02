@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <locale.h>
-#include "../avm/common/http-request.h"
+#include "../avm/utils/http-request.h"
 
 int main(void)
 {

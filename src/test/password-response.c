@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <wchar.h>
 #include <locale.h>
-#include "../avm/common/encoding.h"
+#include "../avm/utils/encoding.h"
 #include "../avm/session/password-response.h"
 
 int main(void)

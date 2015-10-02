@@ -9,6 +9,16 @@ int main(void)
 
     // Test printf variant
     utlog_mode(LOG_FOREGROUND);
+    utlog_pri_mode(LOG_PRI_ENABLE);
+    utlog(LOG_ERR, "A error %s with a number %d\n", "message", 7);
+    utlog(LOG_WARNING, "A warn %s\n", "message");
+    utlog(LOG_NOTICE, "A notice %s\n", "message");
+    utlog(LOG_INFO, "A info %s\n", "message");
+    utlog(LOG_DEBUG, "A debug %s\n", "message");
+
+    // Test printf variant
+    utlog_mode(LOG_FOREGROUND);
+    utlog_pri_mode(LOG_PRI_DISABLE);
     utlog(LOG_ERR, "A error %s with a number %d\n", "message", 7);
     utlog(LOG_WARNING, "A warn %s\n", "message");
     utlog(LOG_NOTICE, "A notice %s\n", "message");
@@ -27,4 +37,3 @@ int main(void)
 
     return 0;
 }
-

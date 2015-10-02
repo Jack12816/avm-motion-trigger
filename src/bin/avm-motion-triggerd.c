@@ -27,6 +27,7 @@
 #include <wchar.h>
 #include <getopt.h>
 #include <sys/stat.h>
+#include "../utils/logger.h"
 #include "../utils/pidfile.h"
 #include "../utils/config.h"
 #include "../avm/session.h"
@@ -36,7 +37,7 @@ static const char *pidfile = "/run/avm-motion-triggerd.pid";
 
 void detect_motions(struct config *conf)
 {
-    printf("Started watching for motions..\n");
+    utlog(LOG_INFO, "Started watching for motions..\n");
 
     while (1) {
         sleep(1);
@@ -46,6 +47,7 @@ void detect_motions(struct config *conf)
 void handle_signal(int signo)
 {
     if (SIGINT == signo || SIGTERM == signo) {
+        utlog(LOG_NOTICE, "Received SIGINT/TERM signal, shuting down..");
         pidfile_remove(pidfile);
         exit(EXIT_SUCCESS);
     }
@@ -100,21 +102,20 @@ void daemonize()
 
 void print_help(int exit_code)
 {
-    printf("avm-motion-triggerd [OPTION]\n");
-    printf("\n");
-    printf("Watch for motions and trigger actions on AVM Smart Home switches.\n");
-    printf("\n");
-    printf("  -h --help         Show the available arguments\n");
-    printf("  -c --config       Set the path to a config file\n");
-    printf("  -f --foreground   Keep the daemon running in foreground\n");
+    utlog(LOG_INFO, "avm-motion-triggerd [OPTION]\n");
+    utlog(LOG_INFO, "\n");
+    utlog(LOG_INFO, "Watch for motions and trigger actions on AVM Smart Home switches.\n");
+    utlog(LOG_INFO, "\n");
+    utlog(LOG_INFO, "  -h --help         Show the available arguments\n");
+    utlog(LOG_INFO, "  -c --config       Set the path to a config file\n");
+    utlog(LOG_INFO, "  -f --foreground   Keep the daemon running in foreground\n");
     exit(exit_code);
 }
 
 int main(int argc, char **argv)
 {
     if (1 == argc) {
-        fprintf(stderr, "No configuration file was specified\n");
-        printf("\n");
+        utlog(LOG_ERR, "No configuration file was specified\n\n");
         print_help(EXIT_FAILURE);
     }
 
@@ -157,7 +158,7 @@ int main(int argc, char **argv)
 
             case '?':
                 // getopt_long already printed an error message.
-                printf("\n");
+                utlog(LOG_INFO, "\n");
                 print_help(EXIT_FAILURE);
                 break;
 
@@ -169,7 +170,7 @@ int main(int argc, char **argv)
     pid_t pid;
 
     if (0 != (pid = pidfile_check(pidfile))) {
-        fprintf(stderr, "A instance of avm-motion-triggerd (%d) is already running\n",
+        utlog(LOG_ERR, "A instance of avm-motion-triggerd (%d) is already running\n",
                 pid);
         exit(EXIT_FAILURE);
     }

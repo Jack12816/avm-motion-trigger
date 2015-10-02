@@ -23,6 +23,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <curl/curl.h>
+#include "../../utils/logger.h"
 #include "http-request.h"
 
 /* Build a URL from a given hostname and a given path */
@@ -45,20 +46,21 @@ void init_response(struct response *res)
     res->ptr = malloc(res->len + 1);
 
     if (NULL == res->ptr) {
-        fwprintf(stderr, L"init_response::malloc() failed\n");
+        utlog(LOG_ERR, "AVM: init_response::malloc() failed\n");
         exit(EXIT_FAILURE);
     }
 
     res->ptr[0] = '\0';
 }
 
-size_t append_response_chunk(void *ptr, size_t size, size_t nmemb, struct response *res)
+size_t append_response_chunk(void *ptr, size_t size, size_t nmemb,
+        struct response *res)
 {
     size_t new_len = res->len + size * nmemb;
     res->ptr = realloc(res->ptr, new_len + 1);
 
     if (NULL == res->ptr) {
-        fwprintf(stderr, L"append_response_chunk::realloc() failed\n");
+        utlog(LOG_ERR, "AVM: append_response_chunk::realloc() failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -92,7 +94,7 @@ int req_get_wor(const char *url)
     curl = curl_easy_init();
 
     if (NULL == curl) {
-        fwprintf(stderr, L"req_get_wor::curl_easy_init() failed\n");
+        utlog(LOG_ERR, "AVM: req_get_wor::curl_easy_init() failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -105,7 +107,7 @@ int req_get_wor(const char *url)
     curl_easy_cleanup(curl);
 
     if (CURLE_OK != result) {
-        fwprintf(stderr, L"req_get_wor::curl_easy_perform() failed (%s)\n",
+        utlog(LOG_ERR, "AVM: req_get_wor::curl_easy_perform() failed (%s)\n",
                 curl_easy_strerror(result));
         return 1;
     }
@@ -122,7 +124,7 @@ int req_get_wr(const char *url, struct response *res)
     curl = curl_easy_init();
 
     if (NULL == curl) {
-        fwprintf(stderr, L"req_get_wr::curl_easy_init() failed\n");
+        utlog(LOG_ERR, "AVM: req_get_wr::curl_easy_init() failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -136,7 +138,7 @@ int req_get_wr(const char *url, struct response *res)
     curl_easy_cleanup(curl);
 
     if (CURLE_OK != result) {
-        fwprintf(stderr, L"req_get_wr::curl_easy_perform() failed (%s)\n",
+        utlog(LOG_ERR, "AVM: req_get_wr::curl_easy_perform() failed (%s)\n",
                 curl_easy_strerror(result));
         return 1;
     }

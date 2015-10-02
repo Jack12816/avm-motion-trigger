@@ -25,6 +25,7 @@
 #include <signal.h>
 #include <errno.h>
 #include "pidfile.h"
+#include "../utils/logger.h"
 
 /* Reads the specified pidfile and returns the read pid. 0 on errors. */
 int pidfile_read(const char *pidfile)
@@ -67,21 +68,21 @@ int pidfile_write(const char *pidfile)
 
     if ((-1 == (fd = open(pidfile, O_RDWR|O_CREAT, 0644))) ||
         (NULL == (file = fdopen(fd, "r+")))) {
-        fprintf(stderr, "Can't open or create %s.\n", pidfile);
+        utlog(LOG_ERR, "Can't open or create %s.\n", pidfile);
         return 0;
     }
 
     if (-1 == flock(fd, LOCK_EX|LOCK_NB)) {
         fscanf(file, "%d", &pid);
         fclose(file);
-        printf("Can't lock, lock is held by pid %d.\n", pid);
+        utlog(LOG_ERR, "Can't lock pid file, lock is held by pid %d.\n", pid);
         return 0;
     }
 
     pid = getpid();
 
     if (!fprintf(file, "%d\n", pid)) {
-        printf("Can't write pid.\n");
+        utlog(LOG_ERR, "Can't write pid to pid file.\n");
         close(fd);
         return 0;
     }
@@ -89,7 +90,7 @@ int pidfile_write(const char *pidfile)
     fflush(file);
 
     if (-1 == flock(fd, LOCK_UN)) {
-        printf("Can't unlock pidfile %s.\n", pidfile);
+        utlog(LOG_ERR, "Can't unlock pid file %s.\n", pidfile);
         close(fd);
         return 0;
     }

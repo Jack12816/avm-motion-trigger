@@ -24,6 +24,7 @@
 #include <stdarg.h>
 #include <string.h>
 #include <wchar.h>
+#include "../../utils/logger.h"
 #include "../common/http-request.h"
 #include "operations.h"
 
@@ -90,7 +91,7 @@ struct response* req_sw(const char *command, const char *url)
     init_response(res);
 
     if (req_get_wr(url, res) > 0) {
-        fwprintf(stderr, L"%s::req_get_wr failed\n", command);
+        utlog(LOG_ERR, "AVM: %s::req_get_wr failed\n", command);
         exit(EXIT_FAILURE);
     }
 

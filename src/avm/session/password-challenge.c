@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
+#include "../../utils/logger.h"
 #include "password-challenge.h"
 
 char* parse_challenge_res(struct response *res)
@@ -40,7 +41,7 @@ char* passwd_challenge(const char *hostname)
     init_response(&res);
 
     if (req_get_wr(build_url(hostname, "/login_sid.lua"), &res) > 0) {
-        fwprintf(stderr, L"get_challenge::perform_get_req failed\n");
+        utlog(LOG_ERR, "AVM: get_challenge::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 

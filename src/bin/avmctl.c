@@ -24,6 +24,7 @@
 #include <string.h>
 #include <wchar.h>
 #include <getopt.h>
+#include "../utils/logger.h"
 #include "../utils/config.h"
 #include "../avm/session.h"
 #include "../avm/switches.h"
@@ -35,7 +36,7 @@ char* login(struct config *c)
             c->avm.password);
 
     if (SESSION_INVALID == session_id_chk(session_id)) {
-        printf("%s\n%s\n", "Failed to login while starting a session.",
+        utlog(LOG_ERR, "%s\n%s\n", "Failed to login while starting a session.",
                 "Wrong username or password.\n");
         exit(EXIT_FAILURE);
     }
@@ -50,7 +51,7 @@ void replace_ain(struct config *c, char **args, size_t argc)
     }
 
     if (0 == strlen(c->device.ain)) {
-        printf("%s\n", "No AIN was configured/given.\n");
+        utlog(LOG_ERR, "%s\n", "No AIN was configured/given.\n");
         exit(EXIT_FAILURE);
     }
 }
@@ -59,7 +60,7 @@ int check_config(struct config *c, char **args, size_t argc)
 {
     char *session_id = login(c);
     session_end(c->avm.hostname, session_id);
-    printf("Configuration is OK. (Session id was: %s)\n", session_id);
+    utlog(LOG_NOTICE, "Configuration is OK. (Session id was: %s)\n", session_id);
     return EXIT_SUCCESS;
 }
 
@@ -72,32 +73,32 @@ int list(struct config *c, char **args, size_t argc)
     int found = switches_list(c->avm.hostname, session_id, ains, max_ains);
 
     if (0 == found) {
-        printf("No switches found.\n");
+        utlog(LOG_ERR, "No switches found.\n");
         return EXIT_FAILURE;
     }
 
     for(short i = 0; i < found; i++) {
 
-        printf("    * Found: %s\n", ains[i]);
-        printf("        * Name: %s\n", switch_name(c->avm.hostname,
+        utlog(LOG_INFO, "    * Found: %s\n", ains[i]);
+        utlog(LOG_INFO, "        * Name: %s\n", switch_name(c->avm.hostname,
                     session_id, ains[i]));
 
         if (SWITCH_PRESENT == switch_present(c->avm.hostname,
                     session_id, ains[i])) {
-            printf("        * Present: yes (connected)\n");
+            utlog(LOG_INFO, "        * Present: yes (connected)\n");
         } else {
-            printf("        * Present: no (not connected)\n");
+            utlog(LOG_INFO, "        * Present: no (not connected)\n");
         }
 
         if (SWITCH_STATE_ON == switch_state(c->avm.hostname,
                     session_id, ains[i])) {
-            printf("        * State: on\n");
+            utlog(LOG_INFO, "        * State: on\n");
         } else {
-            printf("        * State: off\n");
+            utlog(LOG_INFO, "        * State: off\n");
         }
 
         if (i < found-1) {
-            printf("\n");
+            utlog(LOG_INFO, "\n");
         }
     }
 
@@ -113,12 +114,12 @@ int present(struct config *c, char **args, size_t argc)
     if (SWITCH_PRESENT == switch_present(c->avm.hostname,
                 session_id, c->device.ain)) {
         session_end(c->avm.hostname, session_id);
-        printf("%s is present\n", c->device.ain);
+        utlog(LOG_NOTICE, "%s is present\n", c->device.ain);
         return EXIT_SUCCESS;
     }
 
     session_end(c->avm.hostname, session_id);
-    printf("%s is not present\n", c->device.ain);
+    utlog(LOG_ERR, "%s is not present\n", c->device.ain);
     return EXIT_FAILURE;
 }
 
@@ -130,12 +131,12 @@ int state(struct config *c, char **args, size_t argc)
     if (SWITCH_STATE_ON == switch_state(c->avm.hostname,
                 session_id, c->device.ain)) {
         session_end(c->avm.hostname, session_id);
-        printf("%s is on\n", c->device.ain);
+        utlog(LOG_NOTICE, "%s is on\n", c->device.ain);
         return EXIT_SUCCESS;
     }
 
     session_end(c->avm.hostname, session_id);
-    printf("%s is off\n", c->device.ain);
+    utlog(LOG_ERR, "%s is off\n", c->device.ain);
     return EXIT_FAILURE;
 }
 
@@ -144,20 +145,20 @@ int status(struct config *c, char **args, size_t argc)
     replace_ain(c, args, argc);
     char *session_id = login(c);
 
-    printf("%s\n", c->device.ain);
+    utlog(LOG_INFO, "%s\n", c->device.ain);
 
     if (SWITCH_PRESENT == switch_present(c->avm.hostname,
                 session_id, c->device.ain)) {
-        printf("  * Present: yes (connected)\n");
+        utlog(LOG_INFO, "  * Present: yes (connected)\n");
     } else {
-        printf("  * Present: no (not connected)\n");
+        utlog(LOG_INFO, "  * Present: no (not connected)\n");
     }
 
     if (SWITCH_STATE_ON == switch_state(c->avm.hostname,
                 session_id, c->device.ain)) {
-        printf("  * State: on\n");
+        utlog(LOG_INFO, "  * State: on\n");
     } else {
-        printf("  * State: off\n");
+        utlog(LOG_INFO, "  * State: off\n");
     }
 
     session_end(c->avm.hostname, session_id);
@@ -171,9 +172,9 @@ int toggle(struct config *c, char **args, size_t argc)
 
     if (SWITCH_STATE_ON == switch_toggle(c->avm.hostname,
                 session_id, c->device.ain)) {
-        printf("%s is now on\n", c->device.ain);
+        utlog(LOG_NOTICE, "%s is now on\n", c->device.ain);
     } else {
-        printf("%s is now off\n", c->device.ain);
+        utlog(LOG_NOTICE, "%s is now off\n", c->device.ain);
     }
 
     session_end(c->avm.hostname, session_id);
@@ -185,7 +186,7 @@ int off(struct config *c, char **args, size_t argc)
     replace_ain(c, args, argc);
     char *session_id = login(c);
     switch_off(c->avm.hostname, session_id, c->device.ain);
-    printf("%s is now off\n", c->device.ain);
+    utlog(LOG_NOTICE, "%s is now off\n", c->device.ain);
     session_end(c->avm.hostname, session_id);
     return EXIT_SUCCESS;
 }
@@ -195,38 +196,38 @@ int on(struct config *c, char **args, size_t argc)
     replace_ain(c, args, argc);
     char *session_id = login(c);
     switch_on(c->avm.hostname, session_id, c->device.ain);
-    printf("%s is now on\n", c->device.ain);
+    utlog(LOG_NOTICE, "%s is now on\n", c->device.ain);
     session_end(c->avm.hostname, session_id);
     return EXIT_SUCCESS;
 }
 
 void print_help(int exit_code)
 {
-    printf("avmctl [OPTION] {COMMAND} ...\n");
-    printf("\n");
-    printf("Control AVM Smart Home switches.\n");
-    printf("\n");
-    printf("  -h --help         Show the available operations / arguments\n");
-    printf("  -c --config       Set the path to a config file\n");
-    printf("  -H --host         Set a host for the operations (overwrites config host)\n");
-    printf("  -u --user         Set a username for session (overwrites config username)\n");
-    printf("  -p --password     Set a password for the session (overwrites config password)\n");
-    printf("\n");
-    printf("Commands:\n");
-    printf("  check-config      Try to start a test session and on success end it\n");
-    printf("  list              List all usable actors and print some meta information about them\n");
-    printf("  present [AIN]     Check if the configured actor is present/connected (EXIT_SUCCESS = present, EXIT_FAILURE = not present)\n");
-    printf("  state [AIN]       Retrieve the current state of the actor (EXIT_SUCCESS = on, EXIT_FAILURE = off)\n");
-    printf("  status [AIN]      Print information about presence and state of the actor\n");
-    printf("  toggle [AIN]      Toggle the state of the actor\n");
-    printf("  off [AIN]         Turn the actor off\n");
-    printf("  on [AIN]          Turn the actor on\n");
-    printf("\n");
-    printf("Common hints:\n");
-    printf("  All configuration arguments (-H, -u, -p and any [AIN]) overwrites their counter\n");
-    printf("  parts from a configuration file. This is can be handy if you just want to\n");
-    printf("  operate on another actor with the same credentials or on another FRITZ!Box with\n");
-    printf("  the same username and password.\n");
+    utlog(LOG_INFO, "avmctl [OPTION] {COMMAND} ...\n");
+    utlog(LOG_INFO, "\n");
+    utlog(LOG_INFO, "Control AVM Smart Home switches.\n");
+    utlog(LOG_INFO, "\n");
+    utlog(LOG_INFO, "  -h --help         Show the available operations / arguments\n");
+    utlog(LOG_INFO, "  -c --config       Set the path to a config file\n");
+    utlog(LOG_INFO, "  -H --host         Set a host for the operations (overwrites config host)\n");
+    utlog(LOG_INFO, "  -u --user         Set a username for session (overwrites config username)\n");
+    utlog(LOG_INFO, "  -p --password     Set a password for the session (overwrites config password)\n");
+    utlog(LOG_INFO, "\n");
+    utlog(LOG_INFO, "Commands:\n");
+    utlog(LOG_INFO, "  check-config      Try to start a test session and on success end it\n");
+    utlog(LOG_INFO, "  list              List all usable actors and print some meta information about them\n");
+    utlog(LOG_INFO, "  present [AIN]     Check if the configured actor is present/connected (EXIT_SUCCESS = present, EXIT_FAILURE = not present)\n");
+    utlog(LOG_INFO, "  state [AIN]       Retrieve the current state of the actor (EXIT_SUCCESS = on, EXIT_FAILURE = off)\n");
+    utlog(LOG_INFO, "  status [AIN]      Print information about presence and state of the actor\n");
+    utlog(LOG_INFO, "  toggle [AIN]      Toggle the state of the actor\n");
+    utlog(LOG_INFO, "  off [AIN]         Turn the actor off\n");
+    utlog(LOG_INFO, "  on [AIN]          Turn the actor on\n");
+    utlog(LOG_INFO, "\n");
+    utlog(LOG_INFO, "Common hints:\n");
+    utlog(LOG_INFO, "  All configuration arguments (-H, -u, -p and any [AIN]) overwrites their counter\n");
+    utlog(LOG_INFO, "  parts from a configuration file. This is can be handy if you just want to\n");
+    utlog(LOG_INFO, "  operate on another actor with the same credentials or on another FRITZ!Box with\n");
+    utlog(LOG_INFO, "  the same username and password.\n");
     exit(exit_code);
 }
 
@@ -287,7 +288,7 @@ int main(int argc, char **argv)
 
             case '?':
                 // getopt_long already printed an error message.
-                printf("\n");
+                utlog(LOG_INFO, "\n");
                 print_help(EXIT_FAILURE);
                 break;
 
@@ -345,9 +346,8 @@ int main(int argc, char **argv)
         for (; verb->verb; verb++) {
             if (0 == strcmp(argv[optind], verb->verb)) {
                 if (--left > verb->argc) {
-                    fprintf(stderr, "Too many optional arguments for `%s` command\n",
+                    utlog(LOG_ERR, "Too many optional arguments for `%s` command\n\n",
                             verb->verb);
-                    printf("\n");
                     print_help(EXIT_FAILURE);
                 }
 
@@ -362,14 +362,12 @@ int main(int argc, char **argv)
         }
 
         // Unknown command was specified
-        fprintf(stderr, "Unknown command `%s` was specified\n", argv[optind]);
-        printf("\n");
+        utlog(LOG_ERR, "Unknown command `%s` was specified\n\n", argv[optind]);
         print_help(EXIT_FAILURE);
 
     } else {
         // No command was specified
-        fprintf(stderr, "No command was specified\n");
-        printf("\n");
+        utlog(LOG_ERR, "No command was specified\n\n");
         print_help(EXIT_FAILURE);
     }
 

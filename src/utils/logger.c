@@ -30,12 +30,19 @@
 
 #include "logger.h"
 
-static int log_mode = LOG_FOREGROUND;
+static int log_out_mode = LOG_FOREGROUND;
+static int log_pri_mode = LOG_PRI_DISABLE;
 
-/* Switch the logger mode */
+/* Switch the logger output mode */
 void utlog_mode(int mode)
 {
-    log_mode = mode;
+    log_out_mode = mode;
+}
+
+/* Switch the logger priority mode */
+void utlog_pri_mode(int mode)
+{
+    log_pri_mode = mode;
 }
 
 /* Log a message with a given priority, format and a variable list of arguments */
@@ -44,25 +51,37 @@ void utlog(int pri, const char *fmt, ...)
     va_list ap;
     va_start(ap, fmt);
 
-    if (LOG_FOREGROUND == log_mode) {
+    if (LOG_FOREGROUND == log_out_mode) {
 
-        size_t len = strlen(fmt) + 11;
-        char *nfmt = (char*) malloc(sizeof(char) * len);
-        char *priname = (char*) malloc(sizeof(char) * 8);
+        FILE *outfile = stdout;
 
-        for(CODE* scode = prioritynames; NULL != (*scode).c_name; scode++) {
-            if (pri == scode->c_val) {
-                for (int i = 0; i < strlen(scode->c_name); i++) {
-                    priname[i] = toupper(scode->c_name[i]);
-                }
-            }
+        if (pri <= LOG_WARNING) {
+            outfile = stderr;
         }
 
-        snprintf(nfmt, len, "[%7s] %s", priname, fmt);
-        vprintf(nfmt, ap);
+        if (LOG_PRI_ENABLE == log_pri_mode) {
+
+            size_t len = strlen(fmt) + 11;
+            char *nfmt = (char*) malloc(sizeof(char) * len);
+            char *priname = (char*) malloc(sizeof(char) * 8);
+
+            for(CODE* scode = prioritynames; NULL != (*scode).c_name; scode++) {
+                if (pri == scode->c_val) {
+                    for (int i = 0; i < strlen(scode->c_name); i++) {
+                        priname[i] = toupper(scode->c_name[i]);
+                    }
+                }
+            }
+
+            snprintf(nfmt, len, "[%7s] %s", priname, fmt);
+            vfprintf(outfile, nfmt, ap);
+
+        } else {
+            vfprintf(outfile, fmt, ap);
+        }
     }
 
-    if (LOG_BACKGROUND == log_mode) {
+    if (LOG_BACKGROUND == log_out_mode) {
         vsyslog(pri, fmt, ap);
     }
 

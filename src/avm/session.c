@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
+#include "../utils/logger.h"
 #include "common/http-request.h"
 #include "session.h"
 
@@ -61,7 +62,7 @@ char* session_start(const char *hostname, const char *username,
     init_response(&res);
 
     if (req_get_wr(build_url(hostname, path), &res) > 0) {
-        fwprintf(stderr, L"start_session::perform_get_req failed\n");
+        utlog(LOG_ERR, "AVM: start_session::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 
@@ -83,7 +84,7 @@ void session_end(const char *hostname, const char *session_id)
 
     // Perform the request
     if (req_get_wor(build_url(hostname, path)) > 0) {
-        fwprintf(stderr, L"end_session::perform_get_req failed\n");
+        utlog(LOG_ERR, "AVM: end_session::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
 }

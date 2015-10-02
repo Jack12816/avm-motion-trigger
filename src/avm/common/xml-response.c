@@ -26,6 +26,7 @@
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
 #include <libxml/xpathInternals.h>
+#include "../../utils/logger.h"
 #include "xml-response.h"
 
 /* Evaluate a given XPath expression and return the resulting string */
@@ -46,7 +47,7 @@ char* xml_read_chars(const char *xpath, struct response *res)
     doc = xmlReadMemory(res->ptr, res->len, "noname.xml", NULL, 0);
 
     if (NULL == doc) {
-        fwprintf(stderr, L"Failed to parse document\n");
+        utlog(LOG_ERR, "AVM: Failed to parse XML response\n");
         return "";
     }
 
@@ -54,7 +55,7 @@ char* xml_read_chars(const char *xpath, struct response *res)
     xpathCtx = xmlXPathNewContext(doc);
 
     if (NULL == xpathCtx) {
-        fwprintf(stderr, L"xml_read_chars::xmlXPathNewContext() failed\n");
+        utlog(LOG_ERR, "AVM: xml_read_chars::xmlXPathNewContext() failed\n");
         xmlFreeDoc(doc);
         return "";
     }
@@ -63,14 +64,14 @@ char* xml_read_chars(const char *xpath, struct response *res)
     xpathObj = xmlXPathEvalExpression(xpathExpr, xpathCtx);
 
     if (NULL == xpathObj) {
-        fwprintf(stderr, L"xml_read_chars::xmlXPathEvalExpression() failed\n");
+        utlog(LOG_ERR, "AVM: xml_read_chars::xmlXPathEvalExpression() failed\n");
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
         return "";
     }
 
     if (xpathObj->nodesetval->nodeNr < 1) {
-        fwprintf(stderr, L"xml_read_chars() node not found\n");
+        utlog(LOG_ERR, "AVM: xml_read_chars() node not found\n");
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
         return "";

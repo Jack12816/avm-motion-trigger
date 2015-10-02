@@ -26,6 +26,7 @@
 #include <wctype.h>
 #include <libconfig.h>
 #include "config.h"
+#include "../utils/logger.h"
 
 /* Convert a char to a wide char */
 wchar_t* strwchar_t(const char *str)
@@ -70,7 +71,7 @@ struct config get_config(const char *path)
     config_init(&c);
 
     if (!config_read_file(&c, path)) {
-        fwprintf(stderr, L"\n%s:%d - %s", config_error_file(&c),
+        utlog(LOG_ERR, "\n%s:%d - %s", config_error_file(&c),
                 config_error_line(&c), config_error_text(&c));
         config_destroy(&c);
         exit(EXIT_FAILURE);
@@ -112,53 +113,53 @@ void validate_config(struct config *conf)
     int err_cnt = 0;
 
     if (0 == strcmp("", conf->device.ain)) {
-        fprintf(stderr, "[ERR] No actor identification number (ain) was configured.\n");
+        utlog(LOG_ERR, "No actor identification number (ain) was configured.\n");
         err_cnt++;
     }
 
     if (0 != strcmp("on", conf->device.actor_command) &&
         0 != strcmp("off", conf->device.actor_command) &&
         0 != strcmp("toggle", conf->device.actor_command)) {
-        fprintf(stderr, "%s [%s].\n", "[ERR] Actor command (actor_command) is none of",
+        utlog(LOG_ERR, "%s [%s].\n", "Actor command (actor_command) is none of",
                 "on, off, toggle");
         err_cnt++;
     }
 
     if (conf->device.turn_off_after < 0) {
-        fprintf(stderr, "%s %s.\n", "[ERR] Device turn off timeout (turn_device_off_after)",
+        utlog(LOG_ERR, "%s %s.\n", "Device turn off timeout (turn_device_off_after)",
                 "needs to be greater or equal zero");
         err_cnt++;
     }
 
     if (conf->tholds.light_sensor < 0) {
-        fprintf(stderr, "%s %s.\n", "[ERR] Light sensor threshold (light_sensor_thold)",
+        utlog(LOG_ERR, "%s %s.\n", "Light sensor threshold (light_sensor_thold)",
                 "needs to be greater or equal zero");
         err_cnt++;
     }
 
     if (conf->tholds.motion_locktime < 0) {
-        fprintf(stderr, "%s %s.\n", "[ERR] Motion sensor lock time (motion_sensor_locktime)",
+        utlog(LOG_ERR, "%s %s.\n", "Motion sensor lock time (motion_sensor_locktime)",
                 "needs to be greater or equal zero");
         err_cnt++;
     }
 
     if (conf->sensor.motion_gpio <= 0) {
-        fprintf(stderr, "%s %s.\n", "[ERR] Motion sensor GPIO port (motion_sensor_gpio)",
+        utlog(LOG_ERR, "%s %s.\n", "Motion sensor GPIO port (motion_sensor_gpio)",
                 "needs to be greater than zero");
         err_cnt++;
     }
 
     if (conf->sensor.light_channel < 0) {
-        fprintf(stderr, "%s %s.\n", "[ERR] Light sensor SPI channel (light_sensor_channel)",
+        utlog(LOG_ERR, "%s %s.\n", "Light sensor SPI channel (light_sensor_channel)",
                 "needs to be greater or equal zero");
         err_cnt++;
     }
 
     if (err_cnt > 0) {
         if (err_cnt > 1) {
-            fprintf(stderr, "[ERR] Found %d configuration errors.\n", err_cnt);
+            utlog(LOG_ERR, "Found %d configuration errors.\n", err_cnt);
         } else {
-            fprintf(stderr, "[ERR] Found one configuration error.\n");
+            utlog(LOG_ERR, "Found one configuration error.\n");
         }
         exit(EXIT_FAILURE);
     }

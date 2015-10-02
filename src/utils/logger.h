@@ -26,9 +26,14 @@
 
 #define LOG_FOREGROUND 0
 #define LOG_BACKGROUND 1
+#define LOG_PRI_DISABLE 0
+#define LOG_PRI_ENABLE 1
 
-/* Switch the logger mode */
-void utlog_mode(int mode);
+/* Switch the logger output mode */
+void utlog_mode(int);
+
+/* Switch the logger priority mode */
+void utlog_pri_mode(int);
 
 /* Log a message with a given priority, format and a variable list of arguments */
 void utlog(int, const char*, ...);

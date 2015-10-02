@@ -19,19 +19,27 @@
  * along with avm-motion-trigger.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef SENSORS_PIR_MOTION_H
-#define SENSORS_PIR_MOTION_H
+#include "ambient-light.h"
 
-#include <stdint.h>
-#include <bcm2835.h>
+static uint8_t amblght_chnl;
 
-/* Initialize the PIR motion detection sensor on a given GPIO pin, 0 on success */
-int pirmtn_init(uint8_t);
+/* Initialize the Ambient Light sensor on a given SPI/ADC channel, 0 on success */
+int amblght_init(uint8_t chnl)
+{
+    // Set the given pin as our static default one
+    amblght_chnl = chnl;
 
-/* Check for a detection, 0 if nothing was found, 1 motion detected */
-int pirmtn_detected();
+    return 0;
+}
 
-/* Close PIR motion detection sensor connection */
-void pirmtn_close();
+/* Read out the current ambient light level, returns 0-1023 */
+int amblght_level()
+{
+    // The brighter the environment, the greater the level
+    return 905;
+}
 
-#endif
+/* Close Ambient Light sensor connection */
+void amblght_close()
+{
+}

@@ -1,7 +1,7 @@
 /*
  * Copyright (c) 2015 Hermann Mayer
  *
- * AVM - Interface the Smart Home solutions
+ * Sensors - a sensor abstraction interface
  *
  * This file is part of avm-motion-trigger.
  *

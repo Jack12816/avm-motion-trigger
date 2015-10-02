@@ -48,7 +48,7 @@ struct config* init_config(struct config *conf)
     conf->avm.password = (const wchar_t*) strwchar_t("0000");
 
     conf->device.ain = "";
-    conf->device.actor_command = "on";
+    conf->device.actor_command = ON;
     conf->device.turn_off_after = 0;
 
     conf->tholds.light_sensor = 0;
@@ -66,6 +66,7 @@ struct config get_config(const char *path)
     struct config conf;
     config_t c;
     const char *avm_passwd;
+    const char *actor_command;
 
     init_config(&conf);
     config_init(&c);
@@ -89,8 +90,18 @@ struct config get_config(const char *path)
      * Device section settings
      */
     config_lookup_string(&c, "ain", &conf.device.ain);
-    config_lookup_string(&c, "actor_command", &conf.device.actor_command);
+    config_lookup_string(&c, "actor_command", &actor_command);
     config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after);
+
+    if (0 == strcmp("on", actor_command)) {
+        conf.device.actor_command = ON;
+    } else if (0 == strcmp("off", actor_command)) {
+        conf.device.actor_command = OFF;
+    } else if (0 == strcmp("toggle", actor_command)) {
+        conf.device.actor_command = TOGGLE;
+    } else {
+        conf.device.actor_command = UNKNOWN;
+    }
 
     /*
      * Sensor thresholds section settings
@@ -117,9 +128,7 @@ void validate_config(struct config *conf)
         err_cnt++;
     }
 
-    if (0 != strcmp("on", conf->device.actor_command) &&
-        0 != strcmp("off", conf->device.actor_command) &&
-        0 != strcmp("toggle", conf->device.actor_command)) {
+    if (UNKNOWN == conf->device.actor_command) {
         utlog(LOG_ERR, "%s [%s].\n", "Actor command (actor_command) is none of",
                 "on, off, toggle");
         err_cnt++;

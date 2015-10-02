@@ -32,15 +32,119 @@
 #include "../utils/config.h"
 #include "../avm/session.h"
 #include "../avm/switches.h"
+#include "../sensors/pir-motion.h"
+#include "../sensors/ambient-light.h"
 
 static const char *pidfile = "/run/avm-motion-triggerd.pid";
+
+int switch_action(struct config *c)
+{
+    char *session_id;
+    char *statew;
+    char state;
+
+    session_id = session_start(c->avm.hostname, c->avm.username,
+            c->avm.password);
+
+    if (SESSION_INVALID == session_id_chk(session_id)) {
+        utlog(LOG_ERR, "%s\n%s\n", "Failed to login while starting a session.",
+                "Maybe the username/password is wrong or could not contact the FRITZ!Box.\n");
+        return 1;
+    }
+
+    switch (c->device.actor_command) {
+        case ON:
+            state = switch_on(c->avm.hostname, session_id, c->device.ain);
+            break;
+        case OFF:
+            state = switch_off(c->avm.hostname, session_id, c->device.ain);
+            break;
+        case TOGGLE:
+            state = switch_toggle(c->avm.hostname, session_id, c->device.ain);
+            break;
+        default:
+            break;
+    }
+
+    if (SWITCH_STATE_ON == state) {
+        statew = "on";
+    } else {
+        statew = "off";
+    }
+
+    utlog(LOG_NOTICE, "%s was turned %s\n", c->device.ain, statew);
+    session_end(c->avm.hostname, session_id);
+    return 0;
+}
+
+int switch_action_off(struct config *c)
+{
+    int cur_actn = c->device.actor_command;
+    c->device.actor_command = OFF;
+    int ret = switch_action(c);
+    c->device.actor_command = cur_actn;
+    return ret;
+}
 
 void detect_motions(struct config *conf)
 {
     utlog(LOG_INFO, "Started watching for motions..\n");
 
     while (1) {
-        sleep(1);
+
+        // When a motion is detected check the light sensor for the current
+        // ambient light level and if the threshold is passed, turn the
+        // configured actor (AVM lib) on. Wait for the configured timeout, if
+        // set, turn out the actor. While this time range, don't detect new
+        // motions. If no timeout was configured, wait for a configured bounce
+        // lock time to prevent jitter.
+
+        if (1 == pirmtn_detected()) {
+
+            utlog(LOG_INFO, "A motion was detected");
+
+            if (amblght_level() < conf->tholds.light_sensor) {
+                // It is to bright in here, so its unlikely to change in 30 secs
+                sleep(30);
+                continue;
+            }
+
+            if (0 < switch_action(conf)) {
+                // Something went wrong, so wait a little while and try again
+                sleep(1);
+                if (0 < switch_action(conf)) {
+                    // The second try wasn't successful either, so skip this cicle
+                    sleep(30);
+                    continue;
+                }
+            }
+
+            if (conf->device.turn_off_after > 0) {
+                sleep(conf->device.turn_off_after);
+                switch_action_off(conf);
+                pirmtn_reset();
+                continue;
+            }
+
+            if (conf->tholds.motion_locktime > 0) {
+                sleep(conf->tholds.motion_locktime);
+                pirmtn_reset();
+                continue;
+            }
+        }
+    }
+}
+
+void init_sensors(struct config *conf)
+{
+    if (0 != pirmtn_init((uint8_t) conf->sensor.motion_gpio)) {
+        utlog(LOG_ERR, "Failed to initialize the PIR motion detection sensor.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    if (0 != amblght_init((uint8_t) conf->sensor.light_channel)) {
+        utlog(LOG_ERR, "Failed to initialize the Ambient Light sensor.\n");
+        exit(EXIT_FAILURE);
     }
 }
 
@@ -185,11 +289,16 @@ int main(int argc, char **argv)
     }
 
     // Write a pidfile for the current daemon process
-    pidfile_write(pidfile);
+    if (0 == pidfile_write(pidfile)) {
+        exit(EXIT_FAILURE);
+    }
 
     // Bind the signal handler
     signal(SIGINT, handle_signal);
     signal(SIGTERM, handle_signal);
+
+    // Initialize the sensors
+    init_sensors(&conf);
 
     // Call the business logic loop
     detect_motions(&conf);

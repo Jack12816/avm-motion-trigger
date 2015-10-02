@@ -13,11 +13,8 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
-    while (1) {
-        printf("[%u] Current ambient light level: %d\n", (unsigned)time(NULL),
-                amblght_level());
-        sleep(5);
-    }
+    printf("[%u] Current ambient light level: %d\n", (unsigned)time(NULL),
+            amblght_level());
 
     amblght_close();
     return EXIT_SUCCESS;

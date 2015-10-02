@@ -28,6 +28,9 @@
 /* Initialize the PIR motion detection sensor on a given GPIO pin, 0 on success */
 int pirmtn_init(uint8_t);
 
+/* Reset the PIR motion detection sensor */
+void pirmtn_reset();
+
 /* Check for a detection, 0 if nothing was found, 1 motion detected */
 int pirmtn_detected();
 

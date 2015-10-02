@@ -13,9 +13,18 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
+    int i = 0;
+
     while (1) {
+
         if (1 == pirmtn_detected()) {
             printf("[%u] Detected a motion!\n", (unsigned)time(NULL));
+        }
+
+        i++;
+
+        if (i > 50) {
+            break;
         }
     }
 

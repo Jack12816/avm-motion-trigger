@@ -16,7 +16,7 @@ $(TEST_BINS): test-%:%.out
 	#
 	# Test $(BIN)
 	#
-	@./$(BIN)
+	@./$(BIN) || true
 	@$(PRINTF) "\n\n"
 
 $(CLEAN_BINS): BIN = $(@:clean-%=%.out)

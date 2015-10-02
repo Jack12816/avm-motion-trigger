@@ -30,7 +30,7 @@ struct config {
     } avm;
     struct config_device {
         const char *ain;
-        const char *actor_command;
+        enum {UNKNOWN, ON, OFF, TOGGLE} actor_command;
         int turn_off_after;
     } device;
     struct config_tholds {

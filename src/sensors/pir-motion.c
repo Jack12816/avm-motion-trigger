@@ -51,6 +51,12 @@ int pirmtn_init(uint8_t pin)
     return 0;
 }
 
+/* Reset the PIR motion detection sensor */
+void pirmtn_reset()
+{
+    bcm2835_gpio_set_eds(pirmtn_pin);
+}
+
 /* Check for a detection, 0 if nothing was found, 1 motion detected */
 int pirmtn_detected()
 {
@@ -59,7 +65,7 @@ int pirmtn_detected()
 
     if (bcm2835_gpio_eds(pirmtn_pin)) {
         // Now clear the eds flag by setting it to 1
-        bcm2835_gpio_set_eds(pirmtn_pin);
+        pirmtn_reset();
         return 1;
     }
 

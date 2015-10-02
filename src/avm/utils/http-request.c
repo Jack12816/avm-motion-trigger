@@ -53,22 +53,23 @@ void init_response(struct response *res)
     res->ptr[0] = '\0';
 }
 
-size_t append_response_chunk(void *ptr, size_t size, size_t nmemb,
-        struct response *res)
+size_t append_response_chunk(void *contents, size_t size, size_t nmemb, void *userp)
 {
-    size_t new_len = res->len + size * nmemb;
-    res->ptr = realloc(res->ptr, new_len + 1);
+    size_t new_len = size * nmemb;
+    struct response *res = (struct response*) userp;
 
-    if (NULL == res->ptr) {
+    res->ptr = realloc(res->ptr, res->len + new_len + 1);
+
+    if(res->ptr == NULL) {
         utlog(LOG_ERR, "AVM: append_response_chunk::realloc() failed\n");
-        exit(EXIT_FAILURE);
+        return 0;
     }
 
-    memcpy(res->ptr + res->len, ptr, size * nmemb);
-    res->ptr[new_len] = '\0';
-    res->len = new_len;
+    memcpy(&(res->ptr[res->len]), contents, new_len);
+    res->len += new_len;
+    res->ptr[res->len] = 0;
 
-    return size * nmemb;
+    return new_len;
 }
 
 /* Trim carriage return's and line feed's from a given string */
@@ -130,7 +131,7 @@ int req_get_wr(const char *url, struct response *res)
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, append_response_chunk);
-    curl_easy_setopt(curl, CURLOPT_WRITEDATA, res);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)res);
 
     result = curl_easy_perform(curl);
 

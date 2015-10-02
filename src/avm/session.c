@@ -58,6 +58,8 @@ char* session_start(const char *hostname, const char *username,
     // Perform the request
     struct response res;
     char *session_id;
+    size_t ret_len;
+    char *ret;
 
     init_response(&res);
 
@@ -68,9 +70,14 @@ char* session_start(const char *hostname, const char *username,
 
     session_id = parse_start_session_res(&res);
 
-    free(res.ptr);
+    ret_len = strlen(session_id) + 1;
+    ret = (char*) malloc(sizeof(char) * ret_len);
+    strncpy(ret, session_id, ret_len);
 
-    return session_id;
+    free(res.ptr);
+    free(session_id);
+
+    return ret;
 }
 
 /* End a session on a given host with a given session id */

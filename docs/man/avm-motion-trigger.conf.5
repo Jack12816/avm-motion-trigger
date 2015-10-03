@@ -118,7 +118,8 @@ This value is a
 .B "motion_sensor_gpio"
 
     Specify a GPIO pin for the PIR motion sensor. The daemon assumes a state
-    change from LOW to HIGH represents a recognized motion.
+    change from LOW to HIGH represents a recognized motion. The GPIO pin mapping
+    can be found on bcm2835.h or on http://www.airspayce.com/mikem/bcm2835/.
     This parameter is
 .I ignored by
 .BR "avmctl".

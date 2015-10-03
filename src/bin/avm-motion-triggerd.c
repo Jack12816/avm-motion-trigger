@@ -36,6 +36,7 @@
 #include "../sensors/ambient-light.h"
 
 static const char *pidfile = "/run/avm-motion-triggerd.pid";
+static struct config conf;
 
 int switch_action(struct config *c)
 {
@@ -49,6 +50,7 @@ int switch_action(struct config *c)
     if (SESSION_INVALID == session_id_chk(session_id)) {
         utlog(LOG_ERR, "%s\n%s\n", "Failed to login while starting a session.",
                 "Maybe the username/password is wrong or could not contact the FRITZ!Box.\n");
+        free(session_id);
         return 1;
     }
 
@@ -72,7 +74,7 @@ int switch_action(struct config *c)
         statew = "off";
     }
 
-    utlog(LOG_NOTICE, "%s was turned %s\n", c->device.ain, statew);
+    utlog(LOG_NOTICE, "  %s was turned %s\n", c->device.ain, statew);
     session_end(c->avm.hostname, session_id);
     return 0;
 }
@@ -101,7 +103,7 @@ void detect_motions(struct config *conf)
 
         if (1 == pirmtn_detected()) {
 
-            utlog(LOG_INFO, "A motion was detected");
+            utlog(LOG_INFO, "A motion was detected\n");
 
             if (amblght_level() < conf->tholds.light_sensor) {
                 // It is to bright in here, so its unlikely to change in 30 secs
@@ -120,6 +122,8 @@ void detect_motions(struct config *conf)
             }
 
             if (conf->device.turn_off_after > 0) {
+                utlog(LOG_INFO, "  Wait %d secs then turn the actor off\n",
+                        conf->device.turn_off_after);
                 sleep(conf->device.turn_off_after);
                 switch_action_off(conf);
                 pirmtn_reset();
@@ -127,6 +131,8 @@ void detect_motions(struct config *conf)
             }
 
             if (conf->tholds.motion_locktime > 0) {
+                utlog(LOG_INFO, "  Wait %d secs to prevent jitter\n",
+                        conf->tholds.motion_locktime);
                 sleep(conf->tholds.motion_locktime);
                 pirmtn_reset();
                 continue;
@@ -279,13 +285,17 @@ int main(int argc, char **argv)
         exit(EXIT_FAILURE);
     }
 
-    static struct config conf;
     conf = get_config(config_file);
     validate_config(&conf);
 
     // Run as daemon if we should
     if (0 == foreground) {
         daemonize();
+        utlog_mode(LOG_BACKGROUND);
+        utlog_pri_mode(LOG_PRI_DISABLE);
+    } else {
+        utlog_mode(LOG_FOREGROUND);
+        utlog_pri_mode(LOG_PRI_ENABLE);
     }
 
     // Write a pidfile for the current daemon process

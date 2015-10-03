@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 #include <stdarg.h>
 
 #define SYSLOG_NAMES
@@ -61,7 +62,11 @@ void utlog(int pri, const char *fmt, ...)
 
         if (LOG_PRI_ENABLE == log_pri_mode) {
 
-            size_t len = strlen(fmt) + 11;
+            char cur_timew[26];
+            time_t cur_time = time(NULL);
+            strftime(cur_timew, 26, "%Y-%m-%dT%T%z", localtime(&cur_time));
+
+            size_t len = strlen(fmt) + 26 + 11;
             char *nfmt = (char*) malloc(sizeof(char) * len);
             char *priname = (char*) malloc(sizeof(char) * 8);
             memset(nfmt, 0, sizeof(char) * len);
@@ -75,7 +80,7 @@ void utlog(int pri, const char *fmt, ...)
                 }
             }
 
-            snprintf(nfmt, len, "[%7s] %s", priname, fmt);
+            snprintf(nfmt, len, "[%s][%7s] %s", cur_timew, priname, fmt);
             vfprintf(outfile, nfmt, ap);
             free(nfmt);
             free(priname);

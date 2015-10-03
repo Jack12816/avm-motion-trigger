@@ -6,5 +6,5 @@ export GCC := gcc
 export MAN := man
 XML_CONF := xml2-config
 
-export CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -Werror -g
+export CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -Werror -g -O0
 export INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lcrypto -lconfig -lbcm2835

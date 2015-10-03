@@ -56,6 +56,7 @@ char* xml_read_chars(const char *xpath, struct response *res)
 
     if (NULL == xpathCtx) {
         utlog(LOG_ERR, "AVM: xml_read_chars::xmlXPathNewContext() failed\n");
+        xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
         return "";
     }
@@ -65,15 +66,19 @@ char* xml_read_chars(const char *xpath, struct response *res)
 
     if (NULL == xpathObj) {
         utlog(LOG_ERR, "AVM: xml_read_chars::xmlXPathEvalExpression() failed\n");
+        xmlXPathFreeObject(xpathObj);
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
+        xmlCleanupParser();
         return "";
     }
 
     if (xpathObj->nodesetval->nodeNr < 1) {
         utlog(LOG_ERR, "AVM: xml_read_chars() node not found\n");
+        xmlXPathFreeObject(xpathObj);
         xmlXPathFreeContext(xpathCtx);
         xmlFreeDoc(doc);
+        xmlCleanupParser();
         return "";
     }
 
@@ -85,8 +90,12 @@ char* xml_read_chars(const char *xpath, struct response *res)
     ret = (char*) malloc(sizeof(char) * ret_len);
     strncpy(ret, output, ret_len);
 
+    xmlXPathFreeObject(xpathObj);
+    xmlXPathFreeContext(xpathCtx);
     xmlFreeDoc(doc);
+
     free(output);
+    xmlCleanupParser();
 
     return ret;
 }

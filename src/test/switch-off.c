@@ -48,6 +48,7 @@ int main(void)
             strbystate(init_state), strbystate(should_state), strbystate(is_state));
 
     session_end(c.avm.hostname, session_id);
+    free_config(&c);
 
     return 0;
 }

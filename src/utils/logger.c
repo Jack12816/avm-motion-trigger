@@ -64,6 +64,8 @@ void utlog(int pri, const char *fmt, ...)
             size_t len = strlen(fmt) + 11;
             char *nfmt = (char*) malloc(sizeof(char) * len);
             char *priname = (char*) malloc(sizeof(char) * 8);
+            memset(nfmt, 0, sizeof(char) * len);
+            memset(priname, 0, sizeof(char) * 8);
 
             for(CODE* scode = prioritynames; NULL != (*scode).c_name; scode++) {
                 if (pri == scode->c_val) {
@@ -75,6 +77,8 @@ void utlog(int pri, const char *fmt, ...)
 
             snprintf(nfmt, len, "[%7s] %s", priname, fmt);
             vfprintf(outfile, nfmt, ap);
+            free(nfmt);
+            free(priname);
 
         } else {
             vfprintf(outfile, fmt, ap);

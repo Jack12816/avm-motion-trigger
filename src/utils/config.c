@@ -24,7 +24,6 @@
 #include <string.h>
 #include <wchar.h>
 #include <wctype.h>
-#include <libconfig.h>
 #include "config.h"
 #include "../utils/logger.h"
 
@@ -32,7 +31,7 @@
 wchar_t* strwchar_t(const char *str)
 {
     size_t slen = strlen(str);
-    size_t outlen = sizeof(wchar_t) * slen;
+    size_t outlen = sizeof(wchar_t) * (slen + 1);
     wchar_t* out = (wchar_t*) malloc(outlen);
 
     swprintf(out, outlen, L"%hs", str);
@@ -64,34 +63,36 @@ struct config* init_config(struct config *conf)
 struct config get_config(const char *path)
 {
     struct config conf;
-    config_t c;
+    struct config_t *c = (struct config_t*) malloc(sizeof(config_t));
     const char *avm_passwd;
-    const char *actor_command;
+    const char *actor_command = (char*) malloc(sizeof(char) * 7);
+    memset((char*)actor_command, 0, sizeof(char) * 7);
 
     init_config(&conf);
-    config_init(&c);
+    config_init(c);
 
-    if (!config_read_file(&c, path)) {
-        utlog(LOG_ERR, "\n%s:%d - %s", config_error_file(&c),
-                config_error_line(&c), config_error_text(&c));
-        config_destroy(&c);
+    if (!config_read_file(c, path)) {
+        utlog(LOG_ERR, "\n%s:%d - %s", config_error_file(c),
+                config_error_line(c), config_error_text(c));
+        config_destroy(c);
         exit(EXIT_FAILURE);
     }
 
     /*
      * AVM section settings
      */
-    config_lookup_string(&c, "hostname", &conf.avm.hostname);
-    config_lookup_string(&c, "username", &conf.avm.username);
-    config_lookup_string(&c, "password", &avm_passwd);
+    config_lookup_string(c, "hostname", &conf.avm.hostname);
+    config_lookup_string(c, "username", &conf.avm.username);
+    config_lookup_string(c, "password", &avm_passwd);
+    free((char*) conf.avm.password);
     conf.avm.password = (const wchar_t*) strwchar_t(avm_passwd);
 
     /*
      * Device section settings
      */
-    config_lookup_string(&c, "ain", &conf.device.ain);
-    config_lookup_string(&c, "actor_command", &actor_command);
-    config_lookup_int(&c, "turn_device_off_after", &conf.device.turn_off_after);
+    config_lookup_string(c, "ain", &conf.device.ain);
+    config_lookup_string(c, "actor_command", &actor_command);
+    config_lookup_int(c, "turn_device_off_after", &conf.device.turn_off_after);
 
     if (0 == strcmp("on", actor_command)) {
         conf.device.actor_command = ON;
@@ -106,14 +107,17 @@ struct config get_config(const char *path)
     /*
      * Sensor thresholds section settings
      */
-    config_lookup_int(&c, "light_sensor_thold", &conf.tholds.light_sensor);
-    config_lookup_int(&c, "motion_sensor_locktime", &conf.tholds.motion_locktime);
+    config_lookup_int(c, "light_sensor_thold", &conf.tholds.light_sensor);
+    config_lookup_int(c, "motion_sensor_locktime", &conf.tholds.motion_locktime);
 
     /*
      * Sensor ports section settings
      */
-    config_lookup_int(&c, "motion_sensor_gpio", &conf.sensor.motion_gpio);
-    config_lookup_int(&c, "light_sensor_channel", &conf.sensor.light_channel);
+    config_lookup_int(c, "motion_sensor_gpio", &conf.sensor.motion_gpio);
+    config_lookup_int(c, "light_sensor_channel", &conf.sensor.light_channel);
+
+    free((char*) actor_command);
+    conf.ptr = c;
 
     return conf;
 }
@@ -171,5 +175,16 @@ void validate_config(struct config *conf)
             utlog(LOG_ERR, "Found one configuration error.\n");
         }
         exit(EXIT_FAILURE);
+    }
+}
+
+/* Free the config struct */
+void free_config(struct config *conf)
+{
+    free((char*) conf->avm.password);
+
+    if (NULL != conf->ptr) {
+        config_destroy(conf->ptr);
+        free(conf->ptr);
     }
 }

@@ -33,7 +33,8 @@
 wchar_t* striso8859_1(const wchar_t *str)
 {
     size_t len = wcslen(str);
-    wchar_t* compatstr = malloc(sizeof(wchar_t) * len);
+    wchar_t* compatstr = (wchar_t*) malloc(sizeof(wchar_t) * (len + 1));
+    memset(compatstr, 0, sizeof(wchar_t) * (len + 1));
 
     for (int i = 0; i < len; i++) {
         if (str[i] > 255) {
@@ -50,12 +51,13 @@ wchar_t* striso8859_1(const wchar_t *str)
 struct strutf16le* strutf16le(const wchar_t *str)
 {
     size_t input_len = wcslen(str);
-    size_t input_byte_len = sizeof(wchar_t) * input_len;
-    size_t output_byte_len = sizeof(wchar_t) * input_len;
+    size_t input_byte_len = sizeof(wchar_t) * (input_len);
+    size_t output_byte_len = sizeof(wchar_t) * (input_len);
 
-    wchar_t* input = (wchar_t*) malloc(input_byte_len);
-    char* output = (char*) malloc(output_byte_len);
-    struct strutf16le *result = (struct strutf16le*) malloc(sizeof (strutf16le));
+    wchar_t* input = (wchar_t*) malloc(input_byte_len + (sizeof(wchar_t) * 1));
+    char* output = (char*) malloc(output_byte_len + (sizeof(wchar_t) * 1));
+    struct strutf16le *result = (struct strutf16le*) malloc(sizeof(struct strutf16le));
+
     char* input_ptr = (char*) input;
     char* output_ptr = output;
 
@@ -70,6 +72,11 @@ struct strutf16le* strutf16le(const wchar_t *str)
     result->ptr = output;
     result->len = output_byte_len;
 
+    // Terminate the output string.
+    if (output_byte_len >= sizeof(wchar_t)) {
+        *((wchar_t*) output_ptr) = L'\0';
+    }
+
     iconv_close(cd);
     free(input);
 
@@ -79,8 +86,9 @@ struct strutf16le* strutf16le(const wchar_t *str)
 /* Build for a given string a MD5 hash */
 char* strmd5(const unsigned char *str, int len)
 {
-    unsigned char output[MD5_DIGEST_LENGTH];
-    char *res = (char*) malloc(MD5_DIGEST_LENGTH + 1);
+    size_t output_len = MD5_DIGEST_LENGTH * 2;
+    unsigned char output[output_len];
+    char *res = (char*) malloc(sizeof(char) * (output_len + 1));
 
     MD5(str, len, output);
 

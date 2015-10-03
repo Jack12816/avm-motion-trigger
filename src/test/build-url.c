@@ -6,7 +6,9 @@ int main(void)
 {
     setlocale(LC_CTYPE, "");
 
-    printf("%s\n", build_url("gateway.lan", "/login_sid.lua"));
+    char *url = build_url("gateway.lan", "/login_sid.lua");
+    printf("%s\n", url);
+    free(url);
 
     return 0;
 }

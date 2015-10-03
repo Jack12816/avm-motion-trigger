@@ -60,10 +60,11 @@ char* session_start(const char *hostname, const char *username,
     char *session_id;
     size_t ret_len;
     char *ret;
+    char *url = build_url(hostname, path);
 
     init_response(&res);
 
-    if (req_get_wr(build_url(hostname, path), &res) > 0) {
+    if (req_get_wr(url, &res) > 0) {
         utlog(LOG_ERR, "AVM: start_session::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
@@ -76,6 +77,10 @@ char* session_start(const char *hostname, const char *username,
 
     free(res.ptr);
     free(session_id);
+    free(url);
+    free(path);
+    free(challenge);
+    free(response);
 
     return ret;
 }
@@ -89,9 +94,15 @@ void session_end(const char *hostname, const char *session_id)
     snprintf(path, path_len, "/login_sid.lua?sid=%s&logout=1337",
             session_id);
 
+    char *url = build_url(hostname, path);
+
     // Perform the request
-    if (req_get_wor(build_url(hostname, path)) > 0) {
+    if (req_get_wor(url) > 0) {
         utlog(LOG_ERR, "AVM: end_session::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
+
+    free(url);
+    free(path);
+    free((void*) session_id);
 }

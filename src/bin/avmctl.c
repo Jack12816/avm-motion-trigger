@@ -29,15 +29,17 @@
 #include "../avm/session.h"
 #include "../avm/switches.h"
 
+static struct config conf;
+
 char* login(struct config *c)
 {
-    char *session_id = (char*) malloc(sizeof(char) * 17);
-    session_id = session_start(c->avm.hostname, c->avm.username,
+    char *session_id = session_start(c->avm.hostname, c->avm.username,
             c->avm.password);
 
     if (SESSION_INVALID == session_id_chk(session_id)) {
         utlog(LOG_ERR, "%s\n%s\n", "Failed to login while starting a session.",
                 "Wrong username or password.\n");
+        free(session_id);
         exit(EXIT_FAILURE);
     }
 
@@ -59,8 +61,8 @@ void replace_ain(struct config *c, char **args, size_t argc)
 int check_config(struct config *c, char **args, size_t argc)
 {
     char *session_id = login(c);
-    session_end(c->avm.hostname, session_id);
     utlog(LOG_NOTICE, "Configuration is OK. (Session id was: %s)\n", session_id);
+    session_end(c->avm.hostname, session_id);
     return EXIT_SUCCESS;
 }
 
@@ -79,9 +81,10 @@ int list(struct config *c, char **args, size_t argc)
 
     for(short i = 0; i < found; i++) {
 
+        char *name = switch_name(c->avm.hostname, session_id, ains[i]);
+
         utlog(LOG_INFO, "    * Found: %s\n", ains[i]);
-        utlog(LOG_INFO, "        * Name: %s\n", switch_name(c->avm.hostname,
-                    session_id, ains[i]));
+        utlog(LOG_INFO, "        * Name: %s\n", name);
 
         if (SWITCH_PRESENT == switch_present(c->avm.hostname,
                     session_id, ains[i])) {
@@ -100,6 +103,9 @@ int list(struct config *c, char **args, size_t argc)
         if (i < found-1) {
             utlog(LOG_INFO, "\n");
         }
+
+        free(name);
+        free(ains[i]);
     }
 
     session_end(c->avm.hostname, session_id);
@@ -228,6 +234,7 @@ void print_help(int exit_code)
     utlog(LOG_INFO, "  parts from a configuration file. This is can be handy if you just want to\n");
     utlog(LOG_INFO, "  operate on another actor with the same credentials or on another FRITZ!Box with\n");
     utlog(LOG_INFO, "  the same username and password.\n");
+    free_config(&conf);
     exit(exit_code);
 }
 
@@ -298,8 +305,6 @@ int main(int argc, char **argv)
         }
     }
 
-    static struct config conf;
-
     if (0 != strlen(config_file)) {
         // Config file was set, so load it
         conf = get_config(config_file);
@@ -317,6 +322,7 @@ int main(int argc, char **argv)
     }
 
     if (0 != strlen(password)) {
+        free((char*) conf.avm.password);
         conf.avm.password = (const wchar_t*) strwchar_t(password);
     }
 

@@ -39,8 +39,8 @@ char* passwd_response(const char *challenge, const wchar_t *password)
     char *md5;
 
     // Prepare md5 source (challenge-password)
-    swprintf(md5_src, md5_src_len, L"%hs-%ls", challenge,
-            striso8859_1(password));
+    wchar_t *npasswd = striso8859_1(password);
+    swprintf(md5_src, md5_src_len, L"%hs-%ls", challenge, npasswd);
 
     md5_src_utf16le = strutf16le(md5_src);
 
@@ -51,7 +51,11 @@ char* passwd_response(const char *challenge, const wchar_t *password)
     // Build the response
     snprintf(response, response_len, "%s-%s", challenge, md5);
 
+    free(md5);
     free(md5_src);
+    free(npasswd);
+    free(md5_src_utf16le->ptr);
+    free(md5_src_utf16le);
 
     return response;
 }

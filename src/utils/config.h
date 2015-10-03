@@ -22,6 +22,8 @@
 #ifndef UTILS_CONFIG_H
 #define UTILS_CONFIG_H
 
+#include <libconfig.h>
+
 struct config {
     struct config_avm {
         const char *hostname;
@@ -41,6 +43,7 @@ struct config {
         int motion_gpio;
         int light_channel;
     } sensor;
+    struct config_t *ptr;
 };
 
 /* Convert a char to a wide char */
@@ -54,5 +57,8 @@ struct config get_config(const char*);
 
 /* Validate a given config struct */
 void validate_config(struct config*);
+
+/* Free the config struct */
+void free_config(struct config*);
 
 #endif

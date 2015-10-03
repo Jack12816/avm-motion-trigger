@@ -20,7 +20,7 @@ int main(void)
             c.avm.password);
 
     if (SESSION_INVALID == session_id_chk(session_id)) {
-        printf(" * Login was not successfuly!\n");
+        printf(" * Login failed!\n");
         exit(EXIT_FAILURE);
     }
 
@@ -29,6 +29,7 @@ int main(void)
     printf(" --- Time to logout --- \n\n");
 
     session_end(c.avm.hostname, session_id);
+    free_config(&c);
 
     return 0;
 }

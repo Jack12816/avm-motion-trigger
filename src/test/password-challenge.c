@@ -28,6 +28,7 @@ int main(void)
     char *challenge;
     challenge = passwd_challenge("gateway.lan");
     printf("%s\n", challenge);
+    free(challenge);
 
     /*
      * Cleanup function for the XML library.

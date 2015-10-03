@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <wchar.h>
 #include <locale.h>
 #include "../avm/utils/encoding.h"
@@ -21,6 +22,9 @@ int main(void)
     wprintf(L"\n");
     wprintf(L"   static response: %ls\n", L"1234567z-9e224a41eeefa284df7bb0f26c2913e2");
     wprintf(L"          response: %s\n", response);
+
+    free(iso_password);
+    free(response);
 
     return 0;
 }

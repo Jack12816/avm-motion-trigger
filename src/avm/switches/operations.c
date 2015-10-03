@@ -40,7 +40,7 @@ char* build_sw_path(const char *command, const char *session_id, size_t size, ..
     short len = 48 + strlen(command) + strlen(session_id);
     char* ptr;
 
-    for (;size_c > 0; size_c--) {
+    for (; size_c > 0; size_c--) {
         ptr = va_arg(ap_len, char*);
         len += strlen(ptr) + 1;
     }
@@ -83,17 +83,21 @@ char* response_str(struct response res)
     return str;
 }
 
-struct response req_sw(const char *command, const char *url)
+struct response req_sw(const char *hostname, const char *command, const char *path)
 {
     // Perform the request
     struct response res;
+    char *url = build_url(hostname, path);
 
     init_response(&res);
 
     if (req_get_wr(url, &res) > 0) {
         utlog(LOG_ERR, "AVM: %s::req_get_wr failed\n", command);
+        free(url);
         exit(EXIT_FAILURE);
     }
+
+    free(url);
 
     return res;
 }
@@ -102,30 +106,38 @@ struct response req_sw(const char *command, const char *url)
 char req_swoa_char(const char *command, const char *hostname,
         const char *session_id)
 {
-    return response_char(req_sw(command, build_url(hostname,
-        build_sw_path(command, session_id, 0))));
+    char *path = build_sw_path(command, session_id, 0);
+    char res = response_char(req_sw(hostname, command, path));
+    free(path);
+    return res;
 }
 
 /* Perform a switch command and retrieve a state (with ain) */
 char req_swa_char(const char *command, const char *hostname,
         const char *session_id, const char *ain)
 {
-    return response_char(req_sw(command, build_url(hostname,
-        build_sw_path(command, session_id, 2, "ain", ain))));
+    char *path = build_sw_path(command, session_id, 2, "ain", ain);
+    char res = response_char(req_sw(hostname, command, path));
+    free(path);
+    return res;
 }
 
 /* Perform a switch command and retrieve a string (without ain) */
 char* req_swoa_chars(const char *command, const char *hostname,
         const char *session_id)
 {
-    return response_str(req_sw(command, build_url(hostname,
-        build_sw_path(command, session_id, 0))));
+    char *path = build_sw_path(command, session_id, 0);
+    char *res = response_str(req_sw(hostname, command, path));
+    free(path);
+    return res;
 }
 
 /* Perform a switch command and retrieve a string (with ain) */
 char* req_swa_chars(const char *command, const char *hostname,
         const char *session_id, const char *ain)
 {
-    return response_str(req_sw(command, build_url(hostname,
-        build_sw_path(command, session_id, 2, "ain", ain))));
+    char *path = build_sw_path(command, session_id, 2, "ain", ain);
+    char *res = response_str(req_sw(hostname, command, path));
+    free(path);
+    return res;
 }

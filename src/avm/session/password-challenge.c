@@ -37,10 +37,11 @@ char* passwd_challenge(const char *hostname)
     size_t ret_len;
     char *ret;
     struct response res;
+    char *url = build_url(hostname, "/login_sid.lua");
 
     init_response(&res);
 
-    if (req_get_wr(build_url(hostname, "/login_sid.lua"), &res) > 0) {
+    if (req_get_wr(url, &res) > 0) {
         utlog(LOG_ERR, "AVM: get_challenge::perform_get_req failed\n");
         exit(EXIT_FAILURE);
     }
@@ -51,6 +52,7 @@ char* passwd_challenge(const char *hostname)
     ret = (char*) malloc(sizeof(char) * ret_len);
     strncpy(ret, challenge, ret_len);
 
+    free(url);
     free(res.ptr);
     free(challenge);
 

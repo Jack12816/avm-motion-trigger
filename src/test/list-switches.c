@@ -24,9 +24,11 @@ int main(void)
         printf(" * No switches found!\n");
     } else {
         for(short i = 0; i < found; i++) {
+
+            char *name = switch_name(c.avm.hostname, session_id, ains[i]);
+
             printf("    * Found: %s\n", ains[i]);
-            printf("        * Name: %s\n", switch_name(c.avm.hostname,
-                        session_id, ains[i]));
+            printf("        * Name: %s\n", name);
 
             if (SWITCH_PRESENT == switch_present(c.avm.hostname,
                         session_id, ains[i])) {
@@ -45,10 +47,14 @@ int main(void)
             if (i < found-1) {
                 printf("\n");
             }
+
+            free(name);
+            free(ains[i]);
         }
     }
 
     session_end(c.avm.hostname, session_id);
+    free_config(&c);
 
     return 0;
 }

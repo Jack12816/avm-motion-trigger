@@ -26,5 +26,7 @@ int main(void)
     wprintf(L"   sensor.motion_gpio: %d\n", c.sensor.motion_gpio);
     wprintf(L" sensor.light_channel: %d\n", c.sensor.light_channel);
 
+    free_config(&c);
+
     return 0;
 }

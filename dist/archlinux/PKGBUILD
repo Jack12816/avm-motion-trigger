@@ -10,6 +10,7 @@ license=('GPLv3')
 depends=('glibc' 'libconfig' 'curl' 'libbcm2835' 'libxml2')
 source=("http://code.jity.de/Jack12816/${pkgname}/repository/archive.tar.gz?ref=${pkgver}")
 md5sums=('11c2ea89ee61eb41eecb07ee655fbf53')
+backup=(etc/avm-motion-trigger.conf)
 
 build() {
   cd ${pkgname}-${pkgver}-*

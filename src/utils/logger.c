@@ -88,6 +88,8 @@ void utlog(int pri, const char *fmt, ...)
         } else {
             vfprintf(outfile, fmt, ap);
         }
+
+        fflush(outfile);
     }
 
     if (LOG_BACKGROUND == log_out_mode) {

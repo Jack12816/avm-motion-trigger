@@ -42,6 +42,8 @@ clean: $(CLEAN_BINS)
 test: $(TEST_BINS)
 test-mem: $(TEST_MEM_BINS)
 build: $(BINS)
+install: ;
+uninstall: ;
 all: build
 
 .PHONY: clean build

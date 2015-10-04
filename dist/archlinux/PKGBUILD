@@ -1,0 +1,24 @@
+# Maintainer: <hermann.mayer92@gmail.com>
+
+pkgname=avm-motion-trigger
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="AVM Smart Home Motion Trigger Daemon"
+url="http://code.jity.de/Jack12816/avm-motion-trigger"
+arch=('armv6h' 'armv7h' 'x86_64')
+license=('GPLv3')
+depends=('glibc' 'libconfig' 'curl' 'libbcm2835' 'libxml2')
+source=("http://code.jity.de/Jack12816/${pkgname}/repository/archive.tar.gz?ref=${pkgver}")
+md5sums=('7b11f805f0e7c8505129ae6e368ff91a')
+
+build() {
+  cd ${pkgname}-${pkgver}-*
+  make build
+}
+
+package() {
+  cd ${pkgname}-${pkgver}-*
+  make prefix=/usr sysconfdir=/etc DESTDIR="${pkgdir}" install
+  install -Dm644 dist/archlinux/avm-motion-triggerd.service "$pkgdir"/usr/lib/systemd/system/avm-motion-triggerd.service
+  install -Dm644 dist/shell-completion/bash/avmctl "$pkgdir"/usr/share/bash-completion/completions/avmctl
+}

@@ -1,0 +1,11 @@
+[Unit]
+Description=AVM Smart Home Motion Trigger Daemon
+After=local-fs.target network.target
+Documentation=man:avm-motion-triggerd(1)
+
+[Service]
+ExecStart=/usr/bin/avm-motion-triggerd -c /etc/avm-motion-trigger.conf -f
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

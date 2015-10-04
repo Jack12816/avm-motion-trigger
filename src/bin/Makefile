@@ -1,6 +1,8 @@
 OBJS = $(shell $(FIND) .. -type f -name *.o)
 BINS = $(patsubst %.c,%,$(wildcard *.c))
 CLEAN_BINS = $(BINS:%=clean-%)
+INSTALL_BINS = $(BINS:%=install-%)
+UNINSTALL_BINS = $(BINS:%=uninstall-%)
 
 $(BINS): INFILE = $(@:%=%.c)
 $(BINS):
@@ -17,6 +19,20 @@ $(CLEAN_BINS):
 
 clean: $(CLEAN_BINS)
 build: $(BINS)
+
+$(INSTALL_BINS): BIN = $(@:install-%=%)
+$(INSTALL_BINS):
+	-$(TEST) -d $(DESTDIR)$(bindir) || \
+		$(INSTALL) -dm755 $(DESTDIR)$(bindir)
+	$(INSTALL) -m755 $(BIN) $(DESTDIR)$(bindir)
+
+$(UNINSTALL_BINS): BIN = $(@:uninstall-%=%)
+$(UNINSTALL_BINS):
+	-$(TEST) -f $(DESTDIR)$(bindir)/$(BIN) && \
+		$(RM) $(DESTDIR)$(bindir)/$(BIN)
+
+install: $(INSTALL_BINS)
+uninstall: $(UNINSTALL_BINS)
 all: build
 
 .PHONY: clean build

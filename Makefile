@@ -9,8 +9,10 @@ DOCS = $(MAN_PAGES:%=docs-%)
 
 build:
 	$(MAKE) build -C src/
+	$(MAKE) build -C docs/man/
 clean:
 	$(MAKE) clean -C src/
+	$(MAKE) clean -C docs/man/
 test:
 	$(MAKE) test -C src/test/
 $(TEST_BINS):
@@ -19,6 +21,14 @@ $(TEST_MEM_BINS):
 	$(MAKE) $@ -C src/test/
 $(DOCS):
 	$(MAKE) $@ -C docs/man/
+install:
+	$(MAKE) $@ -C src/
+	$(MAKE) $@ -C docs/man/
+	$(MAKE) $@ -C dist/
+uninstall:
+	$(MAKE) $@ -C src/
+	$(MAKE) $@ -C docs/man/
+	$(MAKE) $@ -C dist/
 all: build
 
 .PHONY: all clean test

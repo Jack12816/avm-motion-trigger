@@ -2,5 +2,6 @@
 *.out
 *.o
 *.bin
+*.gz
 /src/bin/avmctl
 /src/bin/avm-motion-triggerd

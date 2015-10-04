@@ -1,10 +1,22 @@
 export TEST := test
 export PRINTF := printf
+export CP := cp
+export MV := mv
 export RM := rm
 export FIND := find
 export GCC := gcc
 export MAN := man
+export INSTALL := install
 XML_CONF := xml2-config
 
 export CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -Werror -g -O0
 export INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lcrypto -lconfig -lbcm2835
+
+DESTDIR ?=
+export prefix ?= /usr/local
+export datarootdir ?= $(prefix)/share
+export exec_prefix ?= $(prefix)
+export bindir ?= $(exec_prefix)/bin
+export mandir ?= $(datarootdir)/man
+export sysconfdir ?= $(prefix)/etc
+export libdir ?= $(exec_prefix)/lib

@@ -27,6 +27,11 @@ used to detect the ambient light level. This sensor was attached to an
 Raspberry Pi. For further details consider the [Platform and Wiring][] wiki
 page.
 
+The project targets the [AVM Smart Home Solutions][]. The productive setup uses
+a [AVM FRITZ!Powerline 546E][] power adapter as actor and a [AVM FRITZ!Box Fon
+WLAN 7360 SL][] as router. It should also be possible to use the power adapter
+standalone.
+
 ## Requirements
 
 The project needs the following libraries to build:
@@ -133,3 +138,6 @@ you plan to work on the project.
 [Light Sensor Brick from ITead Studio]: http://wiki.iteadstudio.com/Light_Sensor_Brick
 [PIR Motion Sensor from Seeed Studio]: http://www.seeedstudio.com/wiki/PIR_Motion_sensor_module
 [MCP3008, 10 Bit / 8 Channel ADC]: http://www.adafruit.com/products/856
+[AVM Smart Home Solutions]: http://avm.de/ratgeber/smart-home/intelligentes-schalten/
+[AVM FRITZ!Powerline 546E]: http://avm.de/produkte/fritzpowerline/fritzpowerline-546e/
+[AVM FRITZ!Box Fon WLAN 7360 SL]: http://avm.de/produkte/fritzbox/fritzbox-7360/

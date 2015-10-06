@@ -51,8 +51,8 @@ build`.
 
 The most adorable targets are `clean build test` (in this order :)). While
 editing the man pages you can easily review the latest state with the `docs-*`
-targets. (currently there are: `docs-avmctl.1 docs-avm-motion-trigger.conf.5
-docs-avm-motion-triggerd.1`)
+targets. (currently there are:
+`docs-avmctl.1 docs-avm-motion-trigger.conf.5 docs-avm-motion-triggerd.1`)
 
 The project comes with a whole bunch of simple test binaries which covers
 single aspects of the project en bloc.  All test cases can be easily accessed

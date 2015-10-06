@@ -11,7 +11,7 @@ off or just toggle it.
 - [Requirements](#requirements)
 - [Installation](#installation)
   - [From Source](#from-source)
-  - [ArchLinux Packaging](#archlinux-packaging)
+  - [Arch Linux Packaging](#arch-linux-packaging)
 - [Configuration](#configuration)
   - [Service](#service)
   - [Process management](#process-management)
@@ -19,9 +19,17 @@ off or just toggle it.
 
 ## About the setup
 
+The project runs productive on a [Raspberry Pi Model B rev2][] with [Arch Linux
+ARM][] as distribution. For detecting human motions the [PIR Motion Sensor from
+Seeed Studio][] was used.  The [Light Sensor Brick from ITead Studio][] was
+used to detect the ambient light level. This sensor was attached to an
+[MCP3008, 10 Bit / 8 Channel ADC][] which is connected via the SPI bus to the
+Raspberry Pi. For further details consider the [Platform and Wiring][] wiki
+page.
+
 ## Requirements
 
-The project need the following libraries to build:
+The project needs the following libraries to build:
 
 * [glibc](https://www.gnu.org/software/libc/) (>=2.20)
 * [openssl](https://www.openssl.org/) (>=1.0.1.l)
@@ -30,8 +38,8 @@ The project need the following libraries to build:
 * [libconfig](http://www.hyperrealm.com/libconfig/) (>=1.5)
 * [libbcm2835](http://www.airspayce.com/mikem/bcm2835/) (>=1.46)
 
-The versions describe the lowest tested version. Is it possible that lower
-and/or higher versions will run fine, too.
+The versions behind the libraries are describing the lowest tested versions. Is it
+possible that lower and/or higher versions will run fine, too.
 
 The project was successfully compiled with the [GCC](https://gcc.gnu.org/) (>=4.9.2).
 
@@ -39,7 +47,7 @@ The project was successfully compiled with the [GCC](https://gcc.gnu.org/) (>=4.
 
 ### From Source
 
-For all non-ArchLinux systems you can install the software the old way by
+For all non-Arch Linux systems you can install the software the old way by
 building it from source (`make build`) and fire a `make install`. The project
 is not configured by autotools, but the makefiles makes use of the [standard
 directory variables][]. Forthermore you can specify a `DESTDIR` variable for
@@ -53,9 +61,9 @@ system if you don't want the software to be installed.
 architecture as it will run on. For cross compiling consider a related guide
 for your target architecture.
 
-### ArchLinux Packaging
+### Arch Linux Packaging
 
-If you are interessested in building an ArchLinux package, all you have to do
+If you are interessested in building an Arch Linux package, all you have to do
 is to clone this repository, install/build all the dependencies of the project
 and run `makepkg` inside the `dist/archlinux` directory. Afterwards you will
 find a fresh package (`avm-motion-trigger-*-*.pkg.tar.xz`) in the same
@@ -68,7 +76,7 @@ directory. This process underlies the same cross compiling restrictions as the
 
 The [avm-motion-triggerd][] daemon can be configured with a configuration file
 which follows the format which is described by the [avm-motion-trigger.conf][]
-man page.  On ArchLinux the system wide configuration can be found at
+man page.  On Arch Linux the system wide configuration can be found at
 `/etc/avm-motion-trigger.conf`.
 
 ### Process management
@@ -79,7 +87,7 @@ background (without additional parameters).  While the daemon is running in
 foreground, all logging outputs will be printed to `stdout` and/or `stderr`.
 The foreground logging is prefixed with the current date/time and the log level
 for the message. While the daemon runs in background, all logging outputs will
-be redirected to `syslog`.  For ArchLinux there is a systemd unit file shipped
+be redirected to `syslog`.  For Arch Linux there is a systemd unit file shipped
 for the daemon. The service can be enabled with:
 `sudo systemctl enable avm-motion-triggerd.service`.
 
@@ -116,6 +124,12 @@ you plan to work on the project.
 
 [avm-motion-triggerd]: ../../wikis/man/avm-motion-triggerd.1.html
 [avm-motion-trigger.conf]: ../../wikis/man/avm-motion-trigger.conf.5.html
+[Platform and Wiring]: ../../wikis/platform-and-wiring
 [Contribution Guide]: CONTRIBUTING.md
 [.editorconfig file]: .editorconfig
 [standard directory variables]: https://www.gnu.org/prep/standards/html_node/Directory-Variables.html
+[Raspberry Pi Model B rev2]: https://www.raspberrypi.org
+[Arch Linux ARM]: http://archlinuxarm.org/
+[Light Sensor Brick from ITead Studio]: http://wiki.iteadstudio.com/Light_Sensor_Brick
+[PIR Motion Sensor from Seeed Studio]: http://www.seeedstudio.com/wiki/PIR_Motion_sensor_module
+[MCP3008, 10 Bit / 8 Channel ADC]: http://www.adafruit.com/products/856

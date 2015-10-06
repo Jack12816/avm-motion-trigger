@@ -39,15 +39,14 @@ foreground, all logging outputs will be printed to `stdout` and/or `stderr`.
 The foreground logging is prefixed with the current date/time and the log level
 for the message. While the daemon runs in background, all logging outputs will
 be redirected to `syslog`.  For ArchLinux there is a systemd unit file shipped
-for the daemon. The service can be enabled with: `sudo systemctl enable
-avm-motion-triggerd.service`.
+for the daemon. The service can be enabled with:
+`sudo systemctl enable avm-motion-triggerd.service`.
 
 ## Development
 
 The project is written in C and comes with a bulk of predefined GNU Make
 targets to speed up common development tasks. To get in touch just fork and
-clone the project, install/build the required dependencies and fire a `make
-build`.
+clone the project, install/build the required dependencies and fire a `make build`.
 
 The most adorable targets are `clean build test` (in this order :)). While
 editing the man pages you can easily review the latest state with the `docs-*`

@@ -27,23 +27,24 @@ off or just toggle it.
 ## Configuration
 ### Service
 
-The [avm-motion-triggerd](wikis/man/avm-motion-triggerd.1.html) daemon can be
-configured with a configuration file which follows the format which is
-described by the
-[avm-motion-trigger.conf](wikis/man/avm-motion-trigger.conf.5.html) man page.
-On ArchLinux the system wide configuration can be found at
+The [avm-motion-triggerd][] daemon can be configured with a configuration file
+which follows the format which is described by the [avm-motion-trigger.conf][]
+man page.  On ArchLinux the system wide configuration can be found at
 `/etc/avm-motion-trigger.conf`.
 
 ### Process management
 
-The [avm-motion-triggerd](wikis/man/avm-motion-triggerd.1.html) daemon can be
-started in different flavors. It is able to run in foreground by adding the
-`-f|--foreground` parameters or in background (without additional parameters).
-While the daemon is running in foreground, all logging outputs will be printed
-to `stdout` and/or `stderr`. The foreground logging is prefixed with the
-current date/time and the log level for the message. While the daemon runs in
-background, all logging outputs will be redirected to `syslog`.  For ArchLinux
-there is a systemd unit file shipped for the daemon. The service can be enabled
-with: `sudo systemctl enable avm-motion-triggerd.service`.
+The [avm-motion-triggerd][] daemon can be started in different flavors. It is
+able to run in foreground by adding the `-f|--foreground` parameters or in
+background (without additional parameters).  While the daemon is running in
+foreground, all logging outputs will be printed to `stdout` and/or `stderr`.
+The foreground logging is prefixed with the current date/time and the log level
+for the message. While the daemon runs in background, all logging outputs will
+be redirected to `syslog`.  For ArchLinux there is a systemd unit file shipped
+for the daemon. The service can be enabled with: `sudo systemctl enable
+avm-motion-triggerd.service`.
 
 ## Development
+
+[avm-motion-triggerd]: /Jack12816/avm-motion-trigger/wikis/man/avm-motion-triggerd.1.html
+[avm-motion-trigger.conf]: /Jack12816/avm-motion-trigger/wikis/man/avm-motion-trigger.conf.5.html

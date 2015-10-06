@@ -46,5 +46,5 @@ avm-motion-triggerd.service`.
 
 ## Development
 
-[avm-motion-triggerd]: /Jack12816/avm-motion-trigger/wikis/man/avm-motion-triggerd.1.html
-[avm-motion-trigger.conf]: /Jack12816/avm-motion-trigger/wikis/man/avm-motion-trigger.conf.5.html
+[avm-motion-triggerd]: ../../wikis/man/avm-motion-triggerd.1.html
+[avm-motion-trigger.conf]: ../../wikis/man/avm-motion-trigger.conf.5.html

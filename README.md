@@ -18,11 +18,38 @@ off or just toggle it.
 - [Development](#development)
 
 ## About the setup
+
 ## Requirements
+
 ## Installation
+
 ### From Source
+
+For all non-ArchLinux systems you can install the software the old way by
+building it from source (`make build`) and fire a `make install`. The project
+is not configured by autotools, but the makefiles makes use of the [standard
+directory variables][]. Forthermore you can specify a `DESTDIR` variable for
+packaging.  (`make DESTDIR=/tmp/xyz install`) If you are interessested in
+changing the default directory variables consider the [Makefile.shared
+file](Makefile.shared). They are change able the same way as `DESTDIR`. The
+`uninstall` target takes care of the same variables and will cleanup your
+system if you don't want the software to be installed.
+
+:warning: This process expects you to build the software on the same
+architecture as it will run on. For cross compiling consider a related guide
+for your target architecture.
+
 ### ArchLinux Packaging
+
+If you are interessested in building an ArchLinux package, all you have to do
+is to clone this repository, install/build all the dependencies of the project
+and run `makepkg` inside the `dist/archlinux` directory. Afterwards you will
+find a fresh package (`avm-motion-trigger-*-*.pkg.tar.xz`) in the same
+directory. This process underlies the same cross compiling restrictions as the
+[From Source](#from-source) installation.
+
 ## Configuration
+
 ### Service
 
 The [avm-motion-triggerd][] daemon can be configured with a configuration file
@@ -77,3 +104,4 @@ you plan to work on the project.
 [avm-motion-trigger.conf]: ../../wikis/man/avm-motion-trigger.conf.5.html
 [Contribution Guide]: CONTRIBUTING.md
 [.editorconfig file]: .editorconfig
+[standard directory variables]: https://www.gnu.org/prep/standards/html_node/Directory-Variables.html

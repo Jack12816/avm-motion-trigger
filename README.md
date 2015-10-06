@@ -21,6 +21,20 @@ off or just toggle it.
 
 ## Requirements
 
+The project need the following libraries to build:
+
+* [glibc](https://www.gnu.org/software/libc/) (>=2.20)
+* [openssl](https://www.openssl.org/) (>=1.0.1.l)
+* [libxml2](http://www.xmlsoft.org/) (>=2.9.2)
+* [libcurl](http://curl.haxx.se/libcurl/) (>=7.40.0)
+* [libconfig](http://www.hyperrealm.com/libconfig/) (>=1.5)
+* [libbcm2835](http://www.airspayce.com/mikem/bcm2835/) (>=1.46)
+
+The versions describe the lowest tested version. Is it possible that lower
+and/or higher versions will run fine, too.
+
+The project was successfully compiled with the [GCC](https://gcc.gnu.org/) (>=4.9.2).
+
 ## Installation
 
 ### From Source

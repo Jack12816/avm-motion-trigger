@@ -104,7 +104,7 @@ void detect_motions(struct config *conf)
 
         if (1 == pirmtn_detected()) {
 
-            utlog(LOG_INFO, "A motion was detected\n");
+            utlog(LOG_NOTICE, "A motion was detected\n");
 
             // Check if the light_sensor is zero,
             // then we skip the light sensor check
@@ -113,10 +113,10 @@ void detect_motions(struct config *conf)
                 allvl = amblght_level();
 
                 if (allvl >= conf->tholds.light_sensor) {
-                    // It is to bright in here, so its unlikely to change in 30 secs
+                    // It is too bright in here, so its unlikely to change in 30 secs
                     utlog(LOG_INFO, "  %s (%d) %s (%d), %s\n", "The ambient light level",
                             allvl, "passed the threshold", conf->tholds.light_sensor,
-                            "it is to bright in here");
+                            "it's too bright in here");
                     sleep(30);
                     continue;
                 }

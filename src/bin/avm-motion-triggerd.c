@@ -106,14 +106,24 @@ void detect_motions(struct config *conf)
 
             utlog(LOG_INFO, "A motion was detected\n");
 
-            allvl = amblght_level();
+            // Check if the light_sensor is zero,
+            // then we skip the light sensor check
+            if (0 != conf->tholds.light_sensor) {
 
-            if (allvl < conf->tholds.light_sensor) {
-                // It is to bright in here, so its unlikely to change in 30 secs
-                utlog(LOG_INFO, "  The ambient light level (%d) did not passed the threshold (%d)\n",
-                        allvl, conf->tholds.light_sensor);
-                sleep(30);
-                continue;
+                allvl = amblght_level();
+
+                if (allvl >= conf->tholds.light_sensor) {
+                    // It is to bright in here, so its unlikely to change in 30 secs
+                    utlog(LOG_INFO, "  %s (%d) %s (%d), %s\n", "The ambient light level",
+                            allvl, "passed the threshold", conf->tholds.light_sensor,
+                            "it is to bright in here");
+                    sleep(30);
+                    continue;
+                }
+
+                utlog(LOG_INFO, "  %s (%d) %s (%d), %s\n", "The ambient light level",
+                        allvl, "did not passed the threshold", conf->tholds.light_sensor,
+                        "let's trigger the actor");
             }
 
             if (0 < switch_action(conf)) {
@@ -153,10 +163,14 @@ void init_sensors(struct config *conf)
         exit(EXIT_FAILURE);
     }
 
-    if (0 != amblght_init(conf->sensor.light_dev,
-                (uint8_t) conf->sensor.light_channel)) {
-        utlog(LOG_ERR, "Failed to initialize the Ambient Light sensor.\n");
-        exit(EXIT_FAILURE);
+    if (0 != conf->tholds.light_sensor) {
+        if (0 != amblght_init(conf->sensor.light_dev,
+                    (uint8_t) conf->sensor.light_channel)) {
+            utlog(LOG_ERR, "Failed to initialize the Ambient Light sensor.\n");
+            exit(EXIT_FAILURE);
+        }
+    } else {
+        utlog(LOG_NOTICE, "Disabled the ambient light sensor..");
     }
 }
 

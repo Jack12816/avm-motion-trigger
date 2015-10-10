@@ -90,6 +90,7 @@ int switch_action_off(struct config *c)
 
 void detect_motions(struct config *conf)
 {
+    int allvl = 0;
     utlog(LOG_INFO, "Started watching for motions..\n");
 
     while (1) {
@@ -105,8 +106,12 @@ void detect_motions(struct config *conf)
 
             utlog(LOG_INFO, "A motion was detected\n");
 
-            if (amblght_level() < conf->tholds.light_sensor) {
+            allvl = amblght_level();
+
+            if (allvl < conf->tholds.light_sensor) {
                 // It is to bright in here, so its unlikely to change in 30 secs
+                utlog(LOG_INFO, "  The ambient light level (%d) did not passed the threshold (%d)\n",
+                        allvl, conf->tholds.light_sensor);
                 sleep(30);
                 continue;
             }

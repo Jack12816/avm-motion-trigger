@@ -41,6 +41,7 @@ struct config {
     } tholds;
     struct config_sensor {
         int motion_gpio;
+        const char *light_dev;
         int light_channel;
     } sensor;
     struct config_t *ptr;

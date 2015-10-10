@@ -126,6 +126,18 @@ This value is a
 This value is a
 .IR "integer".
 
+.B "light_sensor_device"
+
+    The daemon assumes to read the light level from a MCP3008 which is connected
+    to the SPI bus. With this setting you can choose the Linux kernel SPI device
+    the daemon should use. Defaults to
+.IR "/dev/spidev0.0".
+    This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
+.IR "string".
+
 .B "light_sensor_channel"
 
     The daemon assumes to read the light level from a MCP3008 which is connected

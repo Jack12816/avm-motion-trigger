@@ -148,7 +148,8 @@ void init_sensors(struct config *conf)
         exit(EXIT_FAILURE);
     }
 
-    if (0 != amblght_init((uint8_t) conf->sensor.light_channel)) {
+    if (0 != amblght_init(conf->sensor.light_dev,
+                (uint8_t) conf->sensor.light_channel)) {
         utlog(LOG_ERR, "Failed to initialize the Ambient Light sensor.\n");
         exit(EXIT_FAILURE);
     }

@@ -23,10 +23,13 @@
 #define SENSORS_AMBIENT_LIGHT_H
 
 #include <stdint.h>
-#include <bcm2835.h>
 
-/* Initialize the Ambient Light sensor on a given SPI/ADC channel, 0 on success */
-int amblght_init(uint8_t);
+#define SPI_SPEED 1000000
+#define SPI_BITSPERWORD 8
+
+/* Initialize the Ambient Light sensor on a given SPI/Dev + SPI/ADC channel,
+ * 0 on success */
+int amblght_init(const char*, uint8_t);
 
 /* Read out the current ambient light level, returns 0-1023 */
 int amblght_level();

@@ -8,7 +8,7 @@
 
 int main(void)
 {
-    if (0 != amblght_init((uint8_t) ADC_CHANNEL)) {
+    if (0 != amblght_init((const char*) "/dev/spidev0.0", (uint8_t) ADC_CHANNEL)) {
         printf("Failed to initialize the Ambient Light sensor.\n");
         exit(EXIT_FAILURE);
     }

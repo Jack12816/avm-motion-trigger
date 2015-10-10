@@ -54,6 +54,7 @@ struct config* init_config(struct config *conf)
     conf->tholds.motion_locktime = 30;
 
     conf->sensor.motion_gpio = 0;
+    conf->sensor.light_dev = "/dev/spidev0.0";
     conf->sensor.light_channel = 0;
 
     return conf;
@@ -114,6 +115,7 @@ struct config get_config(const char *path)
      * Sensor ports section settings
      */
     config_lookup_int(c, "motion_sensor_gpio", &conf.sensor.motion_gpio);
+    config_lookup_string(c, "light_sensor_device", &conf.sensor.light_dev);
     config_lookup_int(c, "light_sensor_channel", &conf.sensor.light_channel);
 
     free((char*) actor_command);

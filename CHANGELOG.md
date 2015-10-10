@@ -1,3 +1,8 @@
+## 0.3.0
+
+* Fixed the broken logic for the ambient light sensor check / threshold
+* When setting the ambient light sensor threshold to zero, will now disable the ambient light sensor
+
 ## 0.2.0
 
 * Implemented the ambient light sensor on the MCP3008 (SPI)

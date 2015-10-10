@@ -1,3 +1,8 @@
+## 0.3.1
+
+* Changed the log level to NOTICE of the message when a motion was detected
+* Fixed some logging output typos
+
 ## 0.3.0
 
 * Fixed the broken logic for the ambient light sensor check / threshold

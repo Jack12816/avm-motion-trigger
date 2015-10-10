@@ -9,7 +9,7 @@ arch=('armv6h' 'armv7h' 'x86_64')
 license=('GPLv3')
 depends=('glibc' 'libconfig' 'curl' 'libbcm2835' 'libxml2')
 source=("http://code.jity.de/Jack12816/${pkgname}/repository/archive.tar.gz?ref=${pkgver}")
-md5sums=('399efb7bd7f303f5dac6a290131fda45')
+md5sums=('d6569feda5ffd55aef9cf0bd63e9868c')
 backup=(etc/avm-motion-trigger.conf)
 
 build() {

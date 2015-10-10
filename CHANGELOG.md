@@ -1,3 +1,8 @@
+## 0.2.0
+
+* Implemented the ambient light sensor on the MCP3008 (SPI)
+* Added new configuration parameter (`light_sensor_device`) to choose a Linux kernel SPI device
+
 ## 0.1.1
 
 * Added buffer flushes to foreground logging, so systemd/journald should receive them before the process ends

@@ -1,7 +1,7 @@
 # Maintainer: <hermann.mayer92@gmail.com>
 
 pkgname=avm-motion-trigger
-pkgver=0.1.1
+pkgver=0.2.0
 pkgrel=1
 pkgdesc="AVM Smart Home Motion Trigger Daemon"
 url="http://code.jity.de/Jack12816/avm-motion-trigger"

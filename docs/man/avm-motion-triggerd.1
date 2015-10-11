@@ -1,6 +1,12 @@
 .\" Process this file with
 .\" groff -man -Tascii avm-motion-triggerd.1
-.TH AVM-MOTION-TRIGGERD 1 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
+.if !d URL \{\
+.	de URL
+.	 nop \\$2
+.	.
+.\}
+
+.TH avm-motion-triggerd 1 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
 .SH NAME
 avm-motion-triggerd \- Watch for motions and trigger actions on AVM Smart Home switches
 .SH SYNOPSIS
@@ -18,18 +24,27 @@ motion is detected, toggle the Smart Home actor state.
 
 .SH OPTIONS
 The following options are understood:
-.IP "-h --help"
+
+.IP "" 0
+.B -h --help
+.IP "" 4
 Show the available arguments
-.IP "-c --config <file>"
+
+.IP "" 0
+.BI "-c --config " "<file>"
+.IP "" 4
 Set the path to a config file
-.IP "-f --foreground"
+
+.IP "" 0
+.B -f --foreground
+.IP "" 4
 Keep the daemon running in foreground
 
 .SH FILES
 .I avm-motion-trigger.conf
 .RS
 The daemon needs a configuration file. See
-.BR avm-motion-trigger.conf (5)
+.URL "avm-motion-trigger.conf.5.html" "avm-motion-trigger.conf (5)"
 for further details.
 
 .SH AUTHOR

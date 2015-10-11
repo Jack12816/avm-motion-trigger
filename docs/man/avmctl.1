@@ -1,6 +1,12 @@
 .\" Process this file with
-.\" groff -man -Tascii avmctl.1
-.TH AVMCTL 1 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
+.\" groff -man -Tascii avm-motion-triggerd.1
+.if !d URL \{\
+.	de URL
+.	 nop \\$2
+.	.
+.\}
+
+.TH avmctl 1 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
 
 .SH NAME
 avmctl \- Control AVM Smart Home switches
@@ -17,33 +23,71 @@ and off. You could use this application from a simple Bash script.
 
 .SH OPTIONS
 The following options are understood:
-.IP "-h --help"
+
+.IP "" 0
+.B -h --help
+.IP "" 4
 Show the available operations / arguments
-.IP "-c --config <file>"
+
+.IP "" 0
+.BI "-c --config " "<file>"
+.IP "" 4
 Set the path to a config file
-.IP "-H --host"
+
+.IP "" 0
+.B -H --host
+.IP "" 4
 Set a host for the operations (overwrites config host)
-.IP "-u --user"
+
+.IP "" 0
+.B -u --user
+.IP "" 4
 Set a username for session (overwrites config username)
-.IP "-p --password"
+
+.IP "" 0
+.B -p --password
+.IP "" 4
 Set a password for the session (overwrites config password)
 
 .SH COMMANDS
-.IP "check-config"
+.IP "" 0
+.BI check-config
+.IP "" 4
 Try to start a test session and on success end it
-.IP "list"
+
+.IP "" 0
+.BI list
+.IP "" 4
 List all usable actors and print some meta information about them
-.IP "present [AIN]"
-heck if the configured actor is present/connected (EXIT_SUCCESS = present, EXIT_FAILURE = not present)
-.IP "state [AIN]"
-etrieve the current state of the actor (EXIT_SUCCESS = on, EXIT_FAILURE = off)
-.IP "status [AIN]"
-rint information about presence and state of the actor
-.IP "toggle [AIN]"
-oggle the state of the actor
-.IP "off [AIN]"
+
+.IP "" 0
+.BI "present " "[AIN]"
+.IP "" 4
+Check if the configured actor is present/connected (EXIT_SUCCESS = present, EXIT_FAILURE = not present)
+
+.IP "" 0
+.BI "state " "[AIN]"
+.IP "" 4
+Retrieve the current state of the actor (EXIT_SUCCESS = on, EXIT_FAILURE = off)
+
+.IP "" 0
+.BI "status " "[AIN]"
+.IP "" 4
+Print information about presence and state of the actor
+
+.IP "" 0
+.BI "toggle " "[AIN]"
+.IP "" 4
+Toggle the state of the actor
+
+.IP "" 0
+.BI "off " "[AIN]"
+.IP "" 4
 Turn the actor off
-.IP "on [AIN]"
+
+.IP "" 0
+.BI "on " "[AIN]"
+.IP "" 4
 Turn the actor on
 
 .SH COMMON HINTS
@@ -51,6 +95,14 @@ All configuration arguments (-H, -u, -p and any [AIN]) overwrites their counter
 parts from a configuration file. This is can be handy if you just want to
 operate on another actor with the same credentials or on another FRITZ!Box with
 the same username and password.
+
+.SH SEE ALSO
+
+The
+.B avmctl
+can consume a
+.URL "avm-motion-trigger.conf.5.html" "avm-motion-trigger.conf (5)"
+configuration file.
 
 .SH AUTHOR
 Hermann Mayer <jack@jity.de>

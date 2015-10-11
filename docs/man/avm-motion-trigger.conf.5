@@ -1,6 +1,12 @@
 .\" Process this file with
-.\" groff -man -Tascii avmctl.1
-.TH AVM-MOTION-TRIGGER 5 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
+.\" groff -man -Tascii avm-motion-triggerd.1
+.if !d URL \{\
+.	de URL
+.	 nop .B \\$2
+.	.
+.\}
+
+.TH avm-motion-trigger.conf 5 "SEPTEMBER 2015" avm-motion-trigger "User Manuals"
 
 .SH NAME
 avm-motion-trigger.conf \- the configuration file for the AVM Motion Trigger daemon
@@ -24,129 +30,155 @@ All parameters which are described to be
 
 .SH DESCRIPTION
 The
-.BR "avmctl" " and the " "avm-motion-triggerd" " can consume this configuration file."
+.URL "avmctl.1.html" "avmctl (1)"
+and the
+.URL "avm-motion-triggerd.1.html" "avm-motion-triggerd (1)"
+binaries can consume this configuration file.
 The configuration contains multiple sections:
-.IP "AVM FRITZ!Box credentials"
+
+.SS "AVM FRITZ!Box credentials"
 
 These parameters specify the credentials which should be used to login to a
 FRITZ!Box and start a new session.
 
+.IP "" 4
 .B "hostname"
-
-    The hostname/ip[:port] of the fritzbox without protocol scheme or URI paths, by default
+.IP "" 8
+The hostname/ip[:port] of the fritzbox without protocol scheme or URI paths, by default
 .IR "fritz.box".
 This value is a"
 .IR "string".
+.IP "" 0
 
+.IP "" 4
 .B "username"
-
-    The username of the fritzbox which is able to perform smart home management.
-    According to the documentation from AVM this setting can be empty, by default empty.
+.IP "" 8
+The username of the fritzbox which is able to perform smart home management.
+According to the documentation from AVM this setting can be empty, by default empty.
 This value is a"
 .IR "string".
+.IP "" 0
 
+.IP "" 4
 .B "password"
-
-    The plaintext password of the fritzbox, by default
+.IP "" 8
+The plaintext password of the fritzbox, by default
 .IR "0000" ". This value is a"
 .IR "string".
+.IP "" 0
 
-.IP "Device configuration"
+.SS "Device configuration"
 
+.IP "" 4
 .B "ain"
-
-    The Actor Identification Number of the AVM Smart Switch to control.
-    The format of the AIN is
+.IP "" 8
+The Actor Identification Number of the AVM Smart Switch to control.
+The format of the AIN is
 .IR "FF:FF:FF:FF:FF:FF" ". This value is a"
 .IR "string".
-    This parameter will specify be the default actor for
+This parameter will specify be the default actor for
 .BR "avmctl".
+.IP "" 0
 
+.IP "" 4
 .B "actor_command"
-
-    The specified command will be send to the actor in case a motion
-    was detected. Available commands are:
+.IP "" 8
+The specified command will be send to the actor in case a motion
+was detected. Available commands are:
 .RI "`" "on" "`, `" "off" "`, `" "toggle" "`."
-    Defaults to
+Defaults to
 .RI "`" "on" "`."
 This parameter is
 .I ignored by
 .BR "avmctl".
-    This value is a
+This value is a
 .IR "string".
+.IP "" 0
 
+.IP "" 4
 .B "turn_device_off_after"
-
-    Turn off the device after n seconds (eg. 10 minutes).
-    Specifying
+.IP "" 8
+Turn off the device after n seconds (eg. 10 minutes).
+Specifying
 .IR "0" " will disable automatic turn off. Defaults to "
 .IR "0".
-    This parameter is
+This parameter is
 .I ignored by
 .BR "avmctl".
 This value is a
 .IR "integer".
+.IP "" 0
 
-.IP "Sensor thresholds"
+.SS "Sensor thresholds"
 
+.IP "" 4
 .B "light_sensor_thold"
-
-    The daemon takes care of a detected PIR motion if the level of the ambient
-    light is below the specified threshold. 0 will disable the light sensor check.
-    With a 10-bit ADC (eg. MCP3008) the range is 0-1023.
-    This parameter is
+.IP "" 8
+The daemon takes care of a detected PIR motion if the level of the ambient
+light is below the specified threshold. 0 will disable the light sensor check.
+With a 10-bit ADC (eg. MCP3008) the range is 0-1023.
+This parameter is
 .I ignored by
 .BR "avmctl".
 This value is a
 .IR "integer".
+.IP "" 0
 
+.IP "" 4
 .B "motion_sensor_locktime"
-
-    If you set the turn_device_off_after parameter to 0 you probably want
-    to build a toggle-by-motion setup. In this case it is advisable to specify
-    a time range which prevent jitter triggering. So no action is performed
-    for n seconds after a motion was detected. Defaults to
+.IP "" 8
+If you set the turn_device_off_after parameter to 0 you probably want
+to build a toggle-by-motion setup. In this case it is advisable to specify
+a time range which prevent jitter triggering. So no action is performed
+for n seconds after a motion was detected. Defaults to
 .IR "30" " seconds."
-    This parameter is
+This parameter is
 .I ignored by
 .BR "avmctl".
 This value is a
 .IR "integer".
+.IP "" 0
 
-.IP "Sensor ports"
+.SS "Sensor ports"
 
+.IP "" 4
 .B "motion_sensor_gpio"
-
-    Specify a GPIO pin for the PIR motion sensor. The daemon assumes a state
-    change from LOW to HIGH represents a recognized motion. The GPIO pin mapping
-    can be found on bcm2835.h or on http://www.airspayce.com/mikem/bcm2835/.
-    This parameter is
+.IP "" 8
+Specify a GPIO pin for the PIR motion sensor. The daemon assumes a state
+change from LOW to HIGH represents a recognized motion. The GPIO pin mapping
+can be found on bcm2835.h or on http://www.airspayce.com/mikem/bcm2835/.
+This parameter is
 .I ignored by
 .BR "avmctl".
 This value is a
 .IR "integer".
+.IP "" 0
 
+.IP "" 4
 .B "light_sensor_device"
-
-    The daemon assumes to read the light level from a MCP3008 which is connected
-    to the SPI bus. With this setting you can choose the Linux kernel SPI device
-    the daemon should use. Defaults to
+.IP "" 8
+The daemon assumes to read the light level from a MCP3008 which is connected
+to the SPI bus. With this setting you can choose the Linux kernel SPI device
+the daemon should use. Defaults to
 .IR "/dev/spidev0.0".
-    This parameter is
+This parameter is
 .I ignored by
 .BR "avmctl".
 This value is a
 .IR "string".
+.IP "" 0
 
+.IP "" 4
 .B "light_sensor_channel"
-
-    The daemon assumes to read the light level from a MCP3008 which is connected
-    to the SPI bus. With this setting you can configure which channel of the chip
-    will be read out. This parameter is
+.IP "" 8
+The daemon assumes to read the light level from a MCP3008 which is connected
+to the SPI bus. With this setting you can configure which channel of the chip
+will be read out. This parameter is
 .I ignored by
 .BR "avmctl".
 This value is a
 .IR "integer".
+.IP "" 0
 
 .SH AUTHOR
 Hermann Mayer <jack@jity.de>

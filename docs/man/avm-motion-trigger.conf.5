@@ -23,7 +23,7 @@ Any line starting with
 .IR "#" " or " "//" " are comments."
 All parameters which are described to be
 .IR "strings" " needs to wraped by double quotes."
-.I (name = "string";)
+.I (name = """string"";)"
     All parameters which are described to be
 .IR "integers" " needs no such wrapping. Just specify the value."
 .I (name = 0;)
@@ -46,7 +46,7 @@ FRITZ!Box and start a new session.
 .IP "" 8
 The hostname/ip[:port] of the fritzbox without protocol scheme or URI paths, by default
 .IR "fritz.box".
-This value is a"
+This value is a
 .IR "string".
 .IP "" 0
 
@@ -55,7 +55,7 @@ This value is a"
 .IP "" 8
 The username of the fritzbox which is able to perform smart home management.
 According to the documentation from AVM this setting can be empty, by default empty.
-This value is a"
+This value is a
 .IR "string".
 .IP "" 0
 
@@ -105,7 +105,7 @@ Specifying
 This parameter is
 .I ignored by
 .BR "avmctl".
-This value is a
+This value is an
 .IR "integer".
 .IP "" 0
 
@@ -120,7 +120,7 @@ With a 10-bit ADC (eg. MCP3008) the range is 0-1023.
 This parameter is
 .I ignored by
 .BR "avmctl".
-This value is a
+This value is an
 .IR "integer".
 .IP "" 0
 
@@ -135,7 +135,7 @@ for n seconds after a motion was detected. Defaults to
 This parameter is
 .I ignored by
 .BR "avmctl".
-This value is a
+This value is an
 .IR "integer".
 .IP "" 0
 
@@ -150,7 +150,7 @@ can be found on bcm2835.h or on http://www.airspayce.com/mikem/bcm2835/.
 This parameter is
 .I ignored by
 .BR "avmctl".
-This value is a
+This value is an
 .IR "integer".
 .IP "" 0
 
@@ -176,7 +176,7 @@ to the SPI bus. With this setting you can configure which channel of the chip
 will be read out. This parameter is
 .I ignored by
 .BR "avmctl".
-This value is a
+This value is an
 .IR "integer".
 .IP "" 0
 

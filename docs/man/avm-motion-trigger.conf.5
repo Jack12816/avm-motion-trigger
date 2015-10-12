@@ -139,6 +139,51 @@ This value is an
 .IR "integer".
 .IP "" 0
 
+.IP "" 4
+.B "too_bright_timeout"
+.IP "" 8
+With this parameter you are able to enforce a sleeping interval (in seconds) if
+the current ambient light level is greater than the configured threshold. A
+bright environment won't be dark in 10 milliseconds, so you could save power
+and put the daemon to sleep for a while. No new motion will be detected while
+this timeout. 0 will disable this timeout. Defaults to
+.IR "30" " seconds."
+This parameter is
+.I ignored by
+.BR "avmctl".
+This value is an
+.IR "integer".
+.IP "" 0
+
+.IP "" 4
+.B "backup_action_timeout"
+.IP "" 8
+If an error occurs while performing an action on the configured actor, the
+daemon always tries to rescue the situation with a so called backup request.
+With this parameter you can control the time window between the first and the
+backup request (in seconds). 0 will disable this timeout. Defaults to
+.IR "1" " second."
+This parameter is
+.I ignored by
+.BR "avmctl".
+This value is an
+.IR "integer".
+.IP "" 0
+
+.IP "" 4
+.B "failed_backup_action_timeout"
+.IP "" 8
+If even the backup request fails then we can't do much more about it. With this
+parameter you can put the daemon to sleep for a specified interval (in seconds).
+0 will disable this timeout. Defaults to
+.IR "30" " seconds."
+This parameter is
+.I ignored by
+.BR "avmctl".
+This value is an
+.IR "integer".
+.IP "" 0
+
 .SS "Sensor ports"
 
 .IP "" 4

@@ -118,6 +118,7 @@ void detect_motions(struct config *conf)
                             allvl, "passed the threshold", conf->tholds.light_sensor,
                             "it's too bright in here");
                     sleep(30);
+                    pirmtn_reset();
                     continue;
                 }
 
@@ -132,6 +133,7 @@ void detect_motions(struct config *conf)
                 if (0 < switch_action(conf)) {
                     // The second try wasn't successful either, so skip this cicle
                     sleep(30);
+                    pirmtn_reset();
                     continue;
                 }
             }
@@ -152,6 +154,8 @@ void detect_motions(struct config *conf)
                 pirmtn_reset();
                 continue;
             }
+
+            pirmtn_reset();
         }
     }
 }

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="UTF-8">
+    <title>avm-motion-trigger by Jack12816</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+  </head>
+  <body>
+    <section class="page-header">
+      <h1 class="project-name">avm-motion-trigger</h1>
+      <h2 class="project-tagline">AVM Smart Home Motion Trigger Daemon</h2>
+      <a href="https://github.com/Jack12816/avm-motion-trigger" class="btn">View on GitHub</a>
+      <a href="https://github.com/Jack12816/avm-motion-trigger/zipball/master" class="btn">Download .zip</a>
+      <a href="https://github.com/Jack12816/avm-motion-trigger/tarball/master" class="btn">Download .tar.gz</a>
+    </section>
+
+    <section class="main-content">
+      <p><img src="https://raw.githubusercontent.com/Jack12816/avm-motion-trigger/master/docs/assets/logo-project.png" alt="avm-trigger-daemon"></p>
+
+<p>This project targets the tracking of a human motion to trigger an action on an AVM Smart Home actor. When a motion is detected, a light sensor can be checked for the current ambient light level and if a configured threshold is passed, the configured actor will be turn on for example. The <code>avm-motion-triggerd</code> daemon can be configured to send user defined actions, like turn an actor on, off or just toggle it.</p>
+
+<ul>
+<li>  <a href="#about-the-setup">About the setup</a>
+</li>
+<li>  <a href="#requirements">Requirements</a>
+</li>
+<li>  <a href="#installation">Installation</a>
+
+<ul>
+<li>  <a href="#from-source">From Source</a>
+</li>
+<li>  <a href="#arch-linux-packaging">Arch Linux Packaging</a>
+</li>
+</ul>
+</li>
+<li>  <a href="#configuration">Configuration</a>
+
+<ul>
+<li>  <a href="#service">Service</a>
+</li>
+<li>  <a href="#process-management">Process management</a>
+</li>
+</ul>
+</li>
+<li>  <a href="#development">Development</a>
+</li>
+</ul>
+
+<h2>
+<a id="about-the-setup" class="anchor" href="#about-the-setup" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#about-the-setup"></a>About the setup</h2>
+
+<p>The project runs productive on a <a href="https://www.raspberrypi.org">Raspberry Pi Model B rev2</a> with <a href="http://archlinuxarm.org/">Arch Linux ARM</a> as distribution. For detecting human motions the <a href="http://www.seeedstudio.com/wiki/PIR_Motion_sensor_module">PIR Motion Sensor from Seeed Studio</a> was used. The <a href="http://wiki.iteadstudio.com/Light_Sensor_Brick">Light Sensor Brick from ITead Studio</a> was used to detect the ambient light level. This sensor was attached to an <a href="http://www.adafruit.com/products/856">MCP3008, 10 Bit / 8 Channel ADC</a> which is connected via the SPI bus to the Raspberry Pi. For further details consider the <a href="https://github.com/Jack12816/avm-motion-trigger/wiki/Platform-and-Wiring">Platform and Wiring</a> wiki page.</p>
+
+<p>The project targets the <a href="http://avm.de/ratgeber/smart-home/intelligentes-schalten/">AVM Smart Home Solutions</a>. The productive setup uses a <a href="http://avm.de/produkte/fritzpowerline/fritzpowerline-546e/">AVM FRITZ!Powerline 546E</a> power adapter as actor and a <a href="http://avm.de/produkte/fritzbox/fritzbox-7360/">AVM FRITZ!Box Fon WLAN 7360 SL</a> as router. It should also be possible to use the power adapter standalone.</p>
+
+<h2>
+<a id="requirements" class="anchor" href="#requirements" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#requirements"></a>Requirements</h2>
+
+<p>The project needs the following libraries to build:</p>
+
+<ul>
+<li>  <a href="https://www.gnu.org/software/libc/">glibc</a> (&gt;=2.20)</li>
+<li>  <a href="https://www.openssl.org/">openssl</a> (&gt;=1.0.1.l)</li>
+<li>  <a href="http://www.xmlsoft.org/">libxml2</a> (&gt;=2.9.2)</li>
+<li>  <a href="http://curl.haxx.se/libcurl/">libcurl</a> (&gt;=7.40.0)</li>
+<li>  <a href="http://www.hyperrealm.com/libconfig/">libconfig</a> (&gt;=1.5)</li>
+<li>  <a href="http://www.airspayce.com/mikem/bcm2835/">libbcm2835</a> (&gt;=1.46)</li>
+</ul>
+
+<p>The versions behind the libraries are describing the lowest tested versions. Is it possible that lower and/or higher versions will run fine, too.</p>
+
+<p>The project was successfully compiled with the <a href="https://gcc.gnu.org/">GCC</a> (&gt;=4.9.2).</p>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#installation"></a>Installation</h2>
+
+<h3>
+<a id="from-source" class="anchor" href="#from-source" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#from-source"></a>From Source</h3>
+
+<p>For all non-Arch Linux systems you can install the software the old way by building it from source (<code>make build</code>) and fire a <code>make install</code>. The project is not configured by autotools, but the makefiles makes use of the <a href="https://www.gnu.org/prep/standards/html_node/Directory-Variables.html">standard directory variables</a>. Forthermore you can specify a <code>DESTDIR</code> variable for packaging. (<code>make DESTDIR=/tmp/xyz install</code>) If you are interessested in changing the default directory variables consider the <a href="https://github.com/Jack12816/avm-motion-trigger/blob/master/Makefile.shared">Makefile.shared file</a>. They are change able the same way as <code>DESTDIR</code>. The <code>uninstall</code> target takes care of the same variables and will cleanup your system if you don't want the software to be installed.</p>
+
+<p><img class="emoji" title=":warning:" alt=":warning:" src="https://assets-cdn.github.com/images/icons/emoji/unicode/26a0.png" height="20" width="20" align="absmiddle"> This process expects you to build the software on the same architecture as it will run on. For cross compiling consider a related guide for your target architecture.</p>
+
+<h3>
+<a id="arch-linux-packaging" class="anchor" href="#arch-linux-packaging" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#arch-linux-packaging"></a>Arch Linux Packaging</h3>
+
+<p>If you are interessested in building an Arch Linux package, all you have to do is to clone this repository, install/build all the dependencies of the project and run <code>makepkg</code> inside the <code>dist/archlinux</code> directory. Afterwards you will find a fresh package (<code>avm-motion-trigger-*-*.pkg.tar.xz</code>) in the same directory. This process underlies the same cross compiling restrictions as the <a href="#from-source">From Source</a> installation.</p>
+
+<h2>
+<a id="configuration" class="anchor" href="#configuration" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#configuration"></a>Configuration</h2>
+
+<h3>
+<a id="service" class="anchor" href="#service" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#service"></a>Service</h3>
+
+<p>The <a href="http://code.jity.de/Jack12816/avm-motion-trigger/wikis/man/avm-motion-triggerd.1.html">avm-motion-triggerd</a> daemon can be configured with a configuration file which follows the format which is described by the <a href="http://code.jity.de/Jack12816/avm-motion-trigger/wikis/man/avm-motion-trigger.conf.5.html">avm-motion-trigger.conf</a> man page. On Arch Linux the system wide configuration can be found at <code>/etc/avm-motion-trigger.conf</code>.</p>
+
+<h3>
+<a id="process-management" class="anchor" href="#process-management" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#process-management"></a>Process management</h3>
+
+<p>The <a href="http://code.jity.de/Jack12816/avm-motion-trigger/wikis/man/avm-motion-triggerd.1.html">avm-motion-triggerd</a> daemon can be started in different flavors. It is able to run in foreground by adding the <code>-f|--foreground</code> parameters or in background (without additional parameters). While the daemon is running in foreground, all logging outputs will be printed to <code>stdout</code> and/or <code>stderr</code>. The foreground logging is prefixed with the current date/time and the log level for the message. While the daemon runs in background, all logging outputs will be redirected to <code>syslog</code>. For Arch Linux there is a systemd unit file shipped for the daemon. The service can be enabled with: <code>sudo systemctl enable avm-motion-triggerd.service</code>.</p>
+
+<h2>
+<a id="development" class="anchor" href="#development" aria-hidden="true"><span class="octicon octicon-link"></span></a><a href="#development"></a>Development</h2>
+
+<p>The project is written in C and comes with a bulk of predefined GNU Make targets to speed up common development tasks. To get in touch just fork and clone the project, install/build the required dependencies and fire a <code>make build</code>.</p>
+
+<p>The most adorable targets are <code>clean build test</code> (in this order :)). While editing the man pages you can easily review the latest state with the <code>docs-*</code> targets. (currently there are: <code>docs-avmctl.1 docs-avm-motion-trigger.conf.5 docs-avm-motion-triggerd.1</code>)</p>
+
+<p>The project comes with a whole bunch of simple test binaries which covers single aspects of the project en bloc. All test cases can be easily accessed with their corresponding <code>test-*</code> and <code>test-mem-*</code> targets. The <code>test-mem-*</code> variants will be checked for memory leaks by valgrind. Here is a list of the currently available GNU Make targets:</p>
+
+<pre><code>test-ambient-light-level test-build-url test-config test-list-switches
+test-logger test-login test-mem-ambient-light-level test-mem-build-url
+test-mem-config test-mem-list-switches test-mem-logger test-mem-login
+test-mem-password-challenge test-mem-password-response test-mem-pidfile
+test-mem-pir-motion-detection test-mem-switch-off test-mem-switch-on
+test-mem-switch-toggle test-password-challenge test-password-response
+test-pidfile test-pir-motion-detection test-switch-off test-switch-on
+test-switch-toggle
+</code></pre>
+
+<p>Please mind the <a href="https://github.com/Jack12816/avm-motion-trigger/blob/master/CONTRIBUTING.md">Contribution Guide</a> and the given <a href="https://github.com/Jack12816/avm-motion-trigger/blob/master/.editorconfig">.editorconfig file</a> if you plan to work on the project.</p>
+
+      <footer class="site-footer">
+        <span class="site-footer-owner"><a href="https://github.com/Jack12816/avm-motion-trigger">avm-motion-trigger</a> is maintained by <a href="https://github.com/Jack12816">Jack12816</a>.</span>
+
+        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
+      </footer>
+
+    </section>
+
+            <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-30167663-1");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>

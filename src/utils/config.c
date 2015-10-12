@@ -52,6 +52,9 @@ struct config* init_config(struct config *conf)
 
     conf->tholds.light_sensor = 0;
     conf->tholds.motion_locktime = 30;
+    conf->tholds.too_bright_timeout= 30;
+    conf->tholds.backup_action_timeout = 1;
+    conf->tholds.failed_backup_action_timeout = 30;
 
     conf->sensor.motion_gpio = 0;
     conf->sensor.light_dev = "/dev/spidev0.0";
@@ -110,6 +113,10 @@ struct config get_config(const char *path)
      */
     config_lookup_int(c, "light_sensor_thold", &conf.tholds.light_sensor);
     config_lookup_int(c, "motion_sensor_locktime", &conf.tholds.motion_locktime);
+    config_lookup_int(c, "too_bright_timeout", &conf.tholds.too_bright_timeout);
+    config_lookup_int(c, "backup_action_timeout", &conf.tholds.backup_action_timeout);
+    config_lookup_int(c, "failed_backup_action_timeout",
+            &conf.tholds.failed_backup_action_timeout);
 
     /*
      * Sensor ports section settings

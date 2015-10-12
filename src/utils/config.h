@@ -38,6 +38,11 @@ struct config {
     struct config_tholds {
         int light_sensor;
         int motion_locktime;
+
+        int too_bright_timeout;
+        int backup_action_timeout;
+        int failed_backup_action_timeout;
+
     } tholds;
     struct config_sensor {
         int motion_gpio;

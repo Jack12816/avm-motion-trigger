@@ -88,6 +88,14 @@ int switch_action_off(struct config *c)
     return ret;
 }
 
+void sleep_nz(int secs)
+{
+    if (secs > 0) {
+        utlog(LOG_NOTICE, "  Sleep for %d secs\n", secs);
+        sleep(secs);
+    }
+}
+
 void detect_motions(struct config *conf)
 {
     int allvl = 0;
@@ -117,7 +125,7 @@ void detect_motions(struct config *conf)
                     utlog(LOG_INFO, "  %s (%d) %s (%d), %s\n", "The ambient light level",
                             allvl, "passed the threshold", conf->tholds.light_sensor,
                             "it's too bright in here");
-                    sleep(30);
+                    sleep_nz(conf->tholds.too_bright_timeout);
                     pirmtn_reset();
                     continue;
                 }
@@ -129,10 +137,15 @@ void detect_motions(struct config *conf)
 
             if (0 < switch_action(conf)) {
                 // Something went wrong, so wait a little while and try again
-                sleep(1);
+                utlog(LOG_ERR, "  %s %s\n", "Something went wrong while performing",
+                       "the action on the actor, give it one last chance");
+                sleep_nz(conf->tholds.backup_action_timeout);
+
                 if (0 < switch_action(conf)) {
                     // The second try wasn't successful either, so skip this cicle
-                    sleep(30);
+                    utlog(LOG_ERR, "  %s %s\n", "Something went wrong while",
+                            "performing the action on the actor, again, giving up");
+                    sleep_nz(conf->tholds.failed_backup_action_timeout);
                     pirmtn_reset();
                     continue;
                 }

@@ -23,6 +23,7 @@
 #define AVM_SWITCHES_OPERATIONS_H
 
 #define SWITCH_PATH "/webservices/homeautoswitch.lua"
+#define SWITCH_UNVRSL_UNKWN 2
 #define SWITCH_UNVRSL_ON 1
 #define SWITCH_UNVRSL_OFF 0
 #define SWITCH_STATE_ON SWITCH_UNVRSL_ON

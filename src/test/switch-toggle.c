@@ -7,6 +7,7 @@
 
 #define ANSI_COLOR_RED    "\x1b[31;1m"
 #define ANSI_COLOR_YELLOW "\x1b[33;1m"
+#define ANSI_COLOR_GREY   "\x1b[1;30m"
 #define ANSI_COLOR_RESET  "\x1b[0m"
 
 #define STR(s) #s
@@ -16,9 +17,11 @@ char* strbystate(char state)
 {
     if (SWITCH_STATE_ON == state) {
         return COLOR(ANSI_COLOR_YELLOW, on);
+    } else if (SWITCH_STATE_OFF) {
+        return COLOR(ANSI_COLOR_RED, off);
     }
 
-    return COLOR(ANSI_COLOR_RED, off);
+    return COLOR(ANSI_COLOR_GREY, unknown);
 }
 
 int main(void)

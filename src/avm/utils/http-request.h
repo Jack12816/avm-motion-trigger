@@ -29,8 +29,8 @@ struct response {
     size_t len;
 };
 
-/* Initalize a empty response struct */
-void init_response(struct response*);
+/* Initalize a empty response struct, >0 on errors. */
+int init_response(struct response*);
 
 /* Build a URL from a given hostname and a given path */
 char* build_url(const char*, const char*);
@@ -38,10 +38,10 @@ char* build_url(const char*, const char*);
 /* Trim carriage return's and line feed's from a given string */
 char* trimcrlf(char*);
 
-/* GET request WithOut Response */
+/* GET request WithOut Response, >0 on errors. */
 int req_get_wor(const char*);
 
-/* GET request With Response */
+/* GET request With Response, >0 on errors. */
 int req_get_wr(const char*, struct response*);
 
 #endif

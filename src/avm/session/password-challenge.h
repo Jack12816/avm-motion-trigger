@@ -24,6 +24,8 @@
 
 #include "../utils/xml-response.h"
 
+#define CHALLENGE_INVALID "00000000"
+
 /* Retrieve a challenge */
 char* passwd_challenge(const char*);
 

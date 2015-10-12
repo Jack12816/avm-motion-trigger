@@ -30,6 +30,14 @@ char* parse_challenge_res(struct response *res)
     return xml_read_chars("/SessionInfo/Challenge", res);
 }
 
+char* passwd_invalid_challenge()
+{
+    char *challenge = CHALLENGE_INVALID;
+    char *ret = (char*) malloc(sizeof(char) * 9);
+    strncpy(ret, challenge, 9);
+    return ret;
+}
+
 /* Retrieve a challenge */
 char* passwd_challenge(const char *hostname)
 {
@@ -39,11 +47,18 @@ char* passwd_challenge(const char *hostname)
     struct response res;
     char *url = build_url(hostname, "/login_sid.lua");
 
-    init_response(&res);
+    if (init_response(&res) > 0) {
+        free(url);
+        return passwd_invalid_challenge();
+    }
 
     if (req_get_wr(url, &res) > 0) {
         utlog(LOG_ERR, "AVM: get_challenge::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
+        free(url);
+        if (NULL != res.ptr) {
+            free(res.ptr);
+        }
+        return passwd_invalid_challenge();
     }
 
     challenge = parse_challenge_res(&res);

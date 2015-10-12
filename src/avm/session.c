@@ -41,6 +41,14 @@ char* parse_start_session_res(struct response *res)
     return xml_read_chars("/SessionInfo/SID", res);
 }
 
+char* session_invalid_start()
+{
+    char *session = INVALID_SESSION_ID;
+    char *ret = (char*) malloc(sizeof(char) * 17);
+    strncpy(ret, session, 17);
+    return ret;
+}
+
 /* Start a new session by logging in on a given host
  * with username and password response */
 char* session_start(const char *hostname, const char *username,
@@ -62,11 +70,24 @@ char* session_start(const char *hostname, const char *username,
     char *ret;
     char *url = build_url(hostname, path);
 
-    init_response(&res);
+    if (init_response(&res) > 0) {
+        free(challenge);
+        free(url);
+        free(path);
+        free(response);
+        return session_invalid_start();
+    }
 
     if (req_get_wr(url, &res) > 0) {
         utlog(LOG_ERR, "AVM: start_session::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
+        if (NULL != res.ptr) {
+            free(res.ptr);
+        }
+        free(challenge);
+        free(url);
+        free(path);
+        free(response);
+        return session_invalid_start();
     }
 
     session_id = parse_start_session_res(&res);
@@ -99,7 +120,6 @@ void session_end(const char *hostname, const char *session_id)
     // Perform the request
     if (req_get_wor(url) > 0) {
         utlog(LOG_ERR, "AVM: end_session::perform_get_req failed\n");
-        exit(EXIT_FAILURE);
     }
 
     free(url);

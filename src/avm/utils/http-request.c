@@ -39,18 +39,20 @@ char* build_url(const char *host, const char *path)
     return url;
 }
 
-/* Initalize a empty response struct */
-void init_response(struct response *res)
+/* Initalize a empty response struct, >0 on errors. */
+int init_response(struct response *res)
 {
     res->len = 0;
     res->ptr = malloc(res->len + 1);
 
     if (NULL == res->ptr) {
         utlog(LOG_ERR, "AVM: init_response::malloc() failed\n");
-        exit(EXIT_FAILURE);
+        res->len = -1;
+        return 1;
     }
 
     res->ptr[0] = '\0';
+    return 0;
 }
 
 size_t append_response_chunk(void *contents, size_t size, size_t nmemb, void *userp)
@@ -86,7 +88,7 @@ char* trimcrlf(char* str)
     return str;
 }
 
-/* GET request WithOut Response */
+/* GET request WithOut Response, >0 on errors. */
 int req_get_wor(const char *url)
 {
     CURL *curl;
@@ -96,7 +98,7 @@ int req_get_wor(const char *url)
 
     if (NULL == curl) {
         utlog(LOG_ERR, "AVM: req_get_wor::curl_easy_init() failed\n");
-        exit(EXIT_FAILURE);
+        return 1;
     }
 
     curl_easy_setopt(curl, CURLOPT_URL, url);
@@ -116,7 +118,7 @@ int req_get_wor(const char *url)
     return 0;
 }
 
-/* GET request With Response */
+/* GET request With Response, >0 on errors. */
 int req_get_wr(const char *url, struct response *res)
 {
     CURL *curl;
@@ -126,7 +128,7 @@ int req_get_wr(const char *url, struct response *res)
 
     if (NULL == curl) {
         utlog(LOG_ERR, "AVM: req_get_wr::curl_easy_init() failed\n");
-        exit(EXIT_FAILURE);
+        return 1;
     }
 
     curl_easy_setopt(curl, CURLOPT_URL, url);

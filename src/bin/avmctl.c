@@ -38,7 +38,7 @@ char* login(struct config *c)
 
     if (SESSION_INVALID == session_id_chk(session_id)) {
         utlog(LOG_ERR, "%s\n%s\n", "Failed to login while starting a session.",
-                "Wrong username or password.\n");
+                "Maybe wrong username or password, or something else.\n");
         free(session_id);
         exit(EXIT_FAILURE);
     }

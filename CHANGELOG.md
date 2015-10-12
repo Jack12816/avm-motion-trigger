@@ -1,3 +1,13 @@
+## 0.4.0
+
+* The `avm-motion-triggerd` now does not die on failed CUrl requests anymore (See #13)
+* The PIR motion sensor does not remember motions while timeouts anymore (See #12)
+* All timeouts are now configurable (See #11)
+  * Added a new configuration parameter: `too_bright_timeout`
+  * Added a new configuration parameter: `backup_action_timeout`
+  * Added a new configuration parameter: `failed_backup_action_timeout`
+* Improved the man pages
+
 ## 0.3.1
 
 * Changed the log level to NOTICE of the message when a motion was detected

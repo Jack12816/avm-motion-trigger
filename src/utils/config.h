@@ -32,13 +32,13 @@ struct config {
     } avm;
     struct config_device {
         const char *ain;
-        enum {CMD_UNKNOWN, CMD_ON, CMD_OFF, CMD_TOGGLE} actor_command;
+        enum {CMD_OFF, CMD_ON, CMD_TOGGLE, CMD_UNKNOWN} actor_command;
         int turn_off_after;
     } device;
     struct config_tholds {
         int light_sensor;
         int motion_locktime;
-        enum {STATE_UNKNOWN, STATE_ON, STATE_OFF} desired_actor_state;
+        enum {STATE_OFF, STATE_ON, STATE_UNKNOWN} desired_actor_state;
         int too_bright_timeout;
         int backup_action_timeout;
         int failed_backup_action_timeout;

@@ -37,20 +37,94 @@
 
 static const char *pidfile = "/run/avm-motion-triggerd.pid";
 static struct config conf;
+static char *session_id = NULL;
+
+void sleep_nz(int secs)
+{
+    if (secs > 0) {
+        utlog(LOG_NOTICE, "  Sleep for %d secs\n", secs);
+        sleep(secs);
+    }
+}
+
+int login(struct config *c)
+{
+    if (NULL == session_id) {
+        session_id = session_start(c->avm.hostname, c->avm.username,
+                c->avm.password);
+
+        if (SESSION_INVALID == session_id_chk(session_id)) {
+            utlog(LOG_ERR, "%s\n%s %s\n", "Failed to login while starting a session.",
+                    "Maybe the username/password is wrong or could not contact the",
+                    "FRITZ!Box.\n");
+            free(session_id);
+            session_id = NULL;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+int check_state(struct config *c)
+{
+    if (0 < login(c)) {
+        return -1;
+    }
+
+    char *statewd;
+    char *statewc;
+    char state = switch_state(c->avm.hostname, session_id, c->device.ain);
+
+    if (SWITCH_UNVRSL_UNKWN == state) {
+        // Something went wrong, so wait a little while and try again
+        utlog(LOG_ERR, "  %s %s\n", "Something went wrong while checking",
+               "the current actor state, give it one last chance");
+        sleep_nz(c->tholds.backup_action_timeout);
+        state = switch_state(c->avm.hostname, session_id, c->device.ain);
+
+        if (SWITCH_UNVRSL_UNKWN == state) {
+            // The second try wasn't successful either, so skip this cicle
+            utlog(LOG_ERR, "  %s %s\n", "Something went wrong while",
+                    "checking current actor state, again, giving up");
+            sleep_nz(c->tholds.failed_backup_action_timeout);
+            return -2;
+        }
+    }
+
+    if (SWITCH_STATE_ON == state) {
+        statewc = "on";
+    } else {
+        statewc = "off";
+    }
+
+    if (STATE_ON == c->tholds.desired_actor_state) {
+        statewd = "on";
+    } else {
+        statewd = "off";
+    }
+
+    if (c->tholds.desired_actor_state == state) {
+        utlog(LOG_INFO, "  %s (%s) %s (%s), %s\n", "The desired actor state",
+                statewd, "match the current actor state", statewc,
+                "let's go on");
+        return 0;
+    }
+
+    utlog(LOG_INFO, "  %s (%s) %s (%s), %s\n", "The desired actor state",
+            statewd, "did not match the current actor state", statewc,
+            "nothing to do");
+    sleep_nz(c->tholds.desired_actor_state_missmatch_timeout);
+
+    return 1;
+}
 
 int switch_action(struct config *c)
 {
-    char *session_id;
     char *statew;
     char state;
 
-    session_id = session_start(c->avm.hostname, c->avm.username,
-            c->avm.password);
-
-    if (SESSION_INVALID == session_id_chk(session_id)) {
-        utlog(LOG_ERR, "%s\n%s\n", "Failed to login while starting a session.",
-                "Maybe the username/password is wrong or could not contact the FRITZ!Box.\n");
-        free(session_id);
+    if (0 < login(c)) {
         return 1;
     }
 
@@ -76,6 +150,7 @@ int switch_action(struct config *c)
 
     utlog(LOG_NOTICE, "  %s was turned %s\n", c->device.ain, statew);
     session_end(c->avm.hostname, session_id);
+    session_id = NULL;
     return 0;
 }
 
@@ -86,14 +161,6 @@ int switch_action_off(struct config *c)
     int ret = switch_action(c);
     c->device.actor_command = cur_actn;
     return ret;
-}
-
-void sleep_nz(int secs)
-{
-    if (secs > 0) {
-        utlog(LOG_NOTICE, "  Sleep for %d secs\n", secs);
-        sleep(secs);
-    }
 }
 
 void detect_motions(struct config *conf)
@@ -132,7 +199,16 @@ void detect_motions(struct config *conf)
 
                 utlog(LOG_INFO, "  %s (%d) %s (%d), %s\n", "The ambient light level",
                         allvl, "did not passed the threshold", conf->tholds.light_sensor,
-                        "let's trigger the actor");
+                        "let's go on");
+            }
+
+            if (STATE_UNKNOWN != conf->tholds.desired_actor_state) {
+                // We should check the current actor state
+                if (check_state(conf) > 0) {
+                    // The states differ, we already slept if so
+                    pirmtn_reset();
+                    continue;
+                }
             }
 
             if (0 < switch_action(conf)) {

@@ -247,6 +247,19 @@ void daemonize()
     }
 }
 
+void print_version(int exit_code)
+{
+    utlog(LOG_NOTICE, "avm-motion-trigger, avm-motion-triggerd version %s (%s)\n",
+            VERSION, MACHTYPE);
+    utlog(LOG_NOTICE, "Copyright (C) 2015 Hermann Mayer\n");
+    utlog(LOG_NOTICE, "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n");
+    utlog(LOG_NOTICE, "\n");
+    utlog(LOG_NOTICE, "This is free software; you are free to change and redistribute it.\n");
+    utlog(LOG_NOTICE, "There is NO WARRANTY, to the extent permitted by law.\n");
+    free_config(&conf);
+    exit(exit_code);
+}
+
 void print_help(int exit_code)
 {
     utlog(LOG_INFO, "avm-motion-triggerd [OPTION]\n");
@@ -274,6 +287,7 @@ int main(int argc, char **argv)
 
         static struct option long_options[] = {
             {"help",       no_argument,       0, 'h'},
+            {"version",    no_argument,       0, 'v'},
             {"config",     required_argument, 0, 'c'},
             {"foreground", no_argument,       0, 'f'},
             {0, 0, 0, 0}
@@ -282,7 +296,7 @@ int main(int argc, char **argv)
         // getopt_long stores the option index here.
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "hfc:",
+        c = getopt_long(argc, argv, "hvfc:",
                 long_options, &option_index);
 
         // Detect the end of the options.
@@ -293,6 +307,10 @@ int main(int argc, char **argv)
         switch (c) {
             case 'h':
                 print_help(EXIT_SUCCESS);
+                break;
+
+            case 'v':
+                print_version(EXIT_SUCCESS);
                 break;
 
             case 'c':

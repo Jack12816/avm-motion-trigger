@@ -207,6 +207,19 @@ int on(struct config *c, char **args, size_t argc)
     return EXIT_SUCCESS;
 }
 
+void print_version(int exit_code)
+{
+    utlog(LOG_NOTICE, "avm-motion-trigger, avmctl version %s (%s)\n",
+            VERSION, MACHTYPE);
+    utlog(LOG_NOTICE, "Copyright (C) 2015 Hermann Mayer\n");
+    utlog(LOG_NOTICE, "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>\n");
+    utlog(LOG_NOTICE, "\n");
+    utlog(LOG_NOTICE, "This is free software; you are free to change and redistribute it.\n");
+    utlog(LOG_NOTICE, "There is NO WARRANTY, to the extent permitted by law.\n");
+    free_config(&conf);
+    exit(exit_code);
+}
+
 void print_help(int exit_code)
 {
     utlog(LOG_INFO, "avmctl [OPTION] {COMMAND} ...\n");
@@ -214,6 +227,7 @@ void print_help(int exit_code)
     utlog(LOG_INFO, "Control AVM Smart Home switches.\n");
     utlog(LOG_INFO, "\n");
     utlog(LOG_INFO, "  -h --help         Show the available operations / arguments\n");
+    utlog(LOG_INFO, "  -v --version      Show version information\n");
     utlog(LOG_INFO, "  -c --config       Set the path to a config file\n");
     utlog(LOG_INFO, "  -H --host         Set a host for the operations (overwrites config host)\n");
     utlog(LOG_INFO, "  -u --user         Set a username for session (overwrites config username)\n");
@@ -254,6 +268,7 @@ int main(int argc, char **argv)
 
         static struct option long_options[] = {
             {"help",     no_argument,       0, 'h'},
+            {"version",  no_argument,       0, 'v'},
             {"config",   required_argument, 0, 'c'},
             {"host",     required_argument, 0, 'H'},
             {"user",     required_argument, 0, 'u'},
@@ -264,7 +279,7 @@ int main(int argc, char **argv)
         /* getopt_long stores the option index here. */
         int option_index = 0;
 
-        c = getopt_long(argc, argv, "hc:H:u:p:",
+        c = getopt_long(argc, argv, "hvc:H:u:p:",
                 long_options, &option_index);
 
         /* Detect the end of the options. */
@@ -275,6 +290,10 @@ int main(int argc, char **argv)
         switch (c) {
             case 'h':
                 print_help(EXIT_SUCCESS);
+                break;
+
+            case 'v':
+                print_version(EXIT_SUCCESS);
                 break;
 
             case 'c':

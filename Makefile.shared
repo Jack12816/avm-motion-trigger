@@ -9,7 +9,10 @@ export MAN := man
 export INSTALL := install
 XML_CONF := xml2-config
 
-export CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -Werror -g -O0
+export VERSION := $(shell cat VERSION)
+export MACHTYPE := $(shell $(CC) -dumpmachine)
+export CFLAGS = $(shell $(XML_CONF) --cflags) -Wall -Werror -g -O0 \
+    -DVERSION="\"$(VERSION)\"" -DMACHTYPE="\"$(MACHTYPE)\""
 export INCLUDES = $(shell $(XML_CONF) --libs) -lcurl -lcrypto -lconfig -lbcm2835
 
 DESTDIR ?=

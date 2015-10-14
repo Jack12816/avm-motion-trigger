@@ -1,3 +1,11 @@
+## 1.0.0
+
+* The `avm-motion-triggerd` is stable now and is used productive now
+* Added `-v|--version` arguments to the binaries (See #14)
+* Added a new check for the business logic loop: the current actor state check (See #15)
+  * Added a new configuration parameter: `desired_actor_state`
+  * Added a new configuration parameter: `desired_actor_state_missmatch_timeout`
+
 ## 0.4.0
 
 * The `avm-motion-triggerd` now does not die on failed CUrl requests anymore (See #13)

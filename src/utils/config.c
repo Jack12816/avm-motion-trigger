@@ -47,7 +47,7 @@ struct config* init_config(struct config *conf)
     conf->avm.password = (const wchar_t*) strwchar_t("0000");
 
     conf->device.ain = "";
-    conf->device.actor_command = ON;
+    conf->device.actor_command = CMD_ON;
     conf->device.turn_off_after = 0;
 
     conf->tholds.light_sensor = 0;
@@ -55,6 +55,8 @@ struct config* init_config(struct config *conf)
     conf->tholds.too_bright_timeout= 30;
     conf->tholds.backup_action_timeout = 1;
     conf->tholds.failed_backup_action_timeout = 30;
+    conf->tholds.desired_actor_state = STATE_UNKNOWN;
+    conf->tholds.desired_actor_state_missmatch_timeout = 30;
 
     conf->sensor.motion_gpio = 0;
     conf->sensor.light_dev = "/dev/spidev0.0";
@@ -71,6 +73,8 @@ struct config get_config(const char *path)
     const char *avm_passwd;
     const char *actor_command = (char*) malloc(sizeof(char) * 7);
     memset((char*)actor_command, 0, sizeof(char) * 7);
+    const char *desired_actor_state = (char*) malloc(sizeof(char) * 8);
+    memset((char*)desired_actor_state, 0, sizeof(char) * 8);
 
     init_config(&conf);
     config_init(c);
@@ -99,13 +103,13 @@ struct config get_config(const char *path)
     config_lookup_int(c, "turn_device_off_after", &conf.device.turn_off_after);
 
     if (0 == strcmp("on", actor_command)) {
-        conf.device.actor_command = ON;
+        conf.device.actor_command = CMD_ON;
     } else if (0 == strcmp("off", actor_command)) {
-        conf.device.actor_command = OFF;
+        conf.device.actor_command = CMD_OFF;
     } else if (0 == strcmp("toggle", actor_command)) {
-        conf.device.actor_command = TOGGLE;
+        conf.device.actor_command = CMD_TOGGLE;
     } else {
-        conf.device.actor_command = UNKNOWN;
+        conf.device.actor_command = CMD_UNKNOWN;
     }
 
     /*
@@ -117,6 +121,19 @@ struct config get_config(const char *path)
     config_lookup_int(c, "backup_action_timeout", &conf.tholds.backup_action_timeout);
     config_lookup_int(c, "failed_backup_action_timeout",
             &conf.tholds.failed_backup_action_timeout);
+    config_lookup_int(c, "desired_actor_state_missmatch_timeout",
+            &conf.tholds.desired_actor_state_missmatch_timeout);
+    config_lookup_string(c, "desired_actor_state", &desired_actor_state);
+
+    if (0 == strcmp("on", desired_actor_state)) {
+        conf.tholds.desired_actor_state = STATE_ON;
+    } else if (0 == strcmp("off", desired_actor_state)) {
+        conf.tholds.desired_actor_state = STATE_OFF;
+    } else if (0 == strcmp("unknown", desired_actor_state)) {
+        conf.tholds.desired_actor_state = STATE_UNKNOWN;
+    } else {
+        conf.tholds.desired_actor_state = STATE_UNKNOWN;
+    }
 
     /*
      * Sensor ports section settings
@@ -126,6 +143,7 @@ struct config get_config(const char *path)
     config_lookup_int(c, "light_sensor_channel", &conf.sensor.light_channel);
 
     free((char*) actor_command);
+    free((char*) desired_actor_state);
     conf.ptr = c;
 
     return conf;
@@ -141,7 +159,7 @@ void validate_config(struct config *conf)
         err_cnt++;
     }
 
-    if (UNKNOWN == conf->device.actor_command) {
+    if (CMD_UNKNOWN == conf->device.actor_command) {
         utlog(LOG_ERR, "%s [%s].\n", "Actor command (actor_command) is none of",
                 "on, off, toggle");
         err_cnt++;

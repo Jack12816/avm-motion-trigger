@@ -184,6 +184,38 @@ This value is an
 .IR "integer".
 .IP "" 0
 
+.IP "" 4
+.B "desired_actor_state"
+.IP "" 8
+With this configuration parameter you can specify in which state the configured
+actor should be when the daemon is going to send an action to it.  So the
+current state of the actor will be queried if a motion was detected and the
+light sensor check passed (if configured). If the  desired actor state differs
+from the current actor state, the action will be canceled.  This parameter
+accepts the following values:
+.IR "on", "off", and "unkown". Defaults to
+.IR "unknown".
+This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
+.IR "string".
+.IP "" 0
+
+.IP "" 4
+.B "desired_actor_state_missmatch_timeout"
+.IP "" 8
+With this parameter you can set a timeout (in seconds) if the desired actor
+state check is configured and the states differs.  0 will disable this timeout.
+Defaults to
+.IR "30" " seconds."
+This parameter is
+.I ignored by
+.BR "avmctl".
+This value is an
+.IR "integer".
+.IP "" 0
+
 .SS "Sensor ports"
 
 .IP "" 4

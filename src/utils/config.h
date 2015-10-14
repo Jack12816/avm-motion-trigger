@@ -32,17 +32,17 @@ struct config {
     } avm;
     struct config_device {
         const char *ain;
-        enum {UNKNOWN, ON, OFF, TOGGLE} actor_command;
+        enum {CMD_UNKNOWN, CMD_ON, CMD_OFF, CMD_TOGGLE} actor_command;
         int turn_off_after;
     } device;
     struct config_tholds {
         int light_sensor;
         int motion_locktime;
-
+        enum {STATE_UNKNOWN, STATE_ON, STATE_OFF} desired_actor_state;
         int too_bright_timeout;
         int backup_action_timeout;
         int failed_backup_action_timeout;
-
+        int desired_actor_state_missmatch_timeout;
     } tholds;
     struct config_sensor {
         int motion_gpio;

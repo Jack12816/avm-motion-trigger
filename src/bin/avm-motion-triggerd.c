@@ -55,13 +55,13 @@ int switch_action(struct config *c)
     }
 
     switch (c->device.actor_command) {
-        case ON:
+        case CMD_ON:
             state = switch_on(c->avm.hostname, session_id, c->device.ain);
             break;
-        case OFF:
+        case CMD_OFF:
             state = switch_off(c->avm.hostname, session_id, c->device.ain);
             break;
-        case TOGGLE:
+        case CMD_TOGGLE:
             state = switch_toggle(c->avm.hostname, session_id, c->device.ain);
             break;
         default:
@@ -82,7 +82,7 @@ int switch_action(struct config *c)
 int switch_action_off(struct config *c)
 {
     int cur_actn = c->device.actor_command;
-    c->device.actor_command = OFF;
+    c->device.actor_command = CMD_OFF;
     int ret = switch_action(c);
     c->device.actor_command = cur_actn;
     return ret;

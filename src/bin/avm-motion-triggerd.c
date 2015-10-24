@@ -174,7 +174,7 @@ void run_hook(const char *hook_path)
 
     int len = strlen(hook_path) + 20;
     char cmd[len];
-    snprintf(cmd, len, "sh %s 1>/dev/null &", hook_path);
+    snprintf(cmd, len, "sh %s 2>&1 1>/dev/null &", hook_path);
 
     system(cmd);
 }

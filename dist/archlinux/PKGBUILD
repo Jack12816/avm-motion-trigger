@@ -4,11 +4,11 @@ pkgname=avm-motion-trigger
 pkgver=1.0.0
 pkgrel=1
 pkgdesc="AVM Smart Home Motion Trigger Daemon"
-url="http://code.jity.de/Jack12816/avm-motion-trigger"
+url="http://code.jity.de/home-automation/avm-motion-trigger"
 arch=('armv6h' 'armv7h' 'x86_64')
 license=('GPLv3')
 depends=('glibc' 'libconfig' 'curl' 'libbcm2835' 'libxml2')
-source=("http://code.jity.de/Jack12816/${pkgname}/repository/archive.tar.gz?ref=${pkgver}")
+source=("http://code.jity.de/home-automation/${pkgname}/repository/archive.tar.gz?ref=${pkgver}")
 md5sums=('1af7cf893facbde86865c56235195657')
 backup=(etc/avm-motion-trigger.conf)
 

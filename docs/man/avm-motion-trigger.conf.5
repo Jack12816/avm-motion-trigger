@@ -257,5 +257,59 @@ This value is an
 .IR "integer".
 .IP "" 0
 
+.SS "Custom hooks"
+
+.IP "" 4
+.B "motion_pre_hook"
+.IP "" 8
+When a motion is triggered the daemon can kick off a custom user defined
+script.  If a motion is detected and all configured tests are passed the
+custom motion hook will be executed before the AVM logic will be performed.
+The custom hook will be executed in a non-blocking manner. If
+the hook is not configured, it won't be executed. This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
+.IR "string".
+.IP "" 0
+
+.IP "" 4
+.B "motion_post_hook"
+.IP "" 8
+This hook is triggered right after all configured tests are passed as the
+previous hook.  The difference of this hook is that it is executed after the
+AVM logic was performed.  The custom hook will be executed in a non-blocking
+manner. If the hook is not configured, it won't be executed. This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
+.IR "string".
+.IP "" 0
+
+.IP "" 4
+.B "turn_off_pre_hook"
+.IP "" 8
+This hook is executed right after the turn off timeout was passed (when
+configured), before the AVM logic was performed. If the hook is not configured,
+it won't be executed.
+This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
+.IR "string".
+.IP "" 0
+
+.IP "" 4
+.B "turn_off_post_hook"
+.IP "" 8
+This hook is executed right after the turn off timeout was passed (when
+configured), before the AVM logic was performed. If the hook is not configured,
+it won't be executed. This parameter is
+.I ignored by
+.BR "avmctl".
+This value is a
+.IR "string".
+.IP "" 0
+
 .SH AUTHOR
 Hermann Mayer <jack@jity.de>

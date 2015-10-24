@@ -163,6 +163,22 @@ int switch_action_off(struct config *c)
     return ret;
 }
 
+void run_hook(const char *hook_path)
+{
+    // Check if the hook is configured
+    if (0 == strcmp("", hook_path)) {
+        return;
+    }
+
+    utlog(LOG_NOTICE, "  Run custom hook: %s\n", hook_path);
+
+    int len = strlen(hook_path) + 20;
+    char cmd[len];
+    snprintf(cmd, len, "sh %s 1>/dev/null &", hook_path);
+
+    system(cmd);
+}
+
 void detect_motions(struct config *conf)
 {
     int allvl = 0;
@@ -211,6 +227,9 @@ void detect_motions(struct config *conf)
                 }
             }
 
+            // Check for a configured motion action pre hook
+            run_hook(conf->hooks.motion_pre);
+
             if (0 < switch_action(conf)) {
                 // Something went wrong, so wait a little while and try again
                 utlog(LOG_ERR, "  %s %s\n", "Something went wrong while performing",
@@ -227,11 +246,16 @@ void detect_motions(struct config *conf)
                 }
             }
 
+            // Check for a configured motion action post hook
+            run_hook(conf->hooks.motion_post);
+
             if (conf->device.turn_off_after > 0) {
                 utlog(LOG_INFO, "  Wait %d secs then turn the actor off\n",
                         conf->device.turn_off_after);
                 sleep(conf->device.turn_off_after);
+                run_hook(conf->hooks.turn_off_pre);
                 switch_action_off(conf);
+                run_hook(conf->hooks.turn_off_post);
                 pirmtn_reset();
                 continue;
             }

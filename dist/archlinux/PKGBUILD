@@ -22,4 +22,8 @@ package() {
   make prefix=/usr sysconfdir=/etc DESTDIR="${pkgdir}" install
   install -Dm644 dist/archlinux/avm-motion-triggerd.service "$pkgdir"/usr/lib/systemd/system/avm-motion-triggerd.service
   install -Dm644 dist/shell-completion/bash/avmctl "$pkgdir"/usr/share/bash-completion/completions/avmctl
+  install -Dm777 dist/archlinux/avm-motion-trigger.d/pre-motion.sh "$pkgdir"/etc/avm-motion-trigger.d/pre-motion.sh
+  install -Dm777 dist/archlinux/avm-motion-trigger.d/post-motion.sh "$pkgdir"/etc/avm-motion-trigger.d/post-motion.sh
+  install -Dm777 dist/archlinux/avm-motion-trigger.d/pre-turn-off.sh "$pkgdir"/etc/avm-motion-trigger.d/pre-turn-off.sh
+  install -Dm777 dist/archlinux/avm-motion-trigger.d/post-turn-off.sh "$pkgdir"/etc/avm-motion-trigger.d/post-turn-off.sh
 }

@@ -10,7 +10,7 @@ license=('GPLv3')
 depends=('glibc' 'libconfig' 'curl' 'libbcm2835' 'libxml2')
 source=("http://code.jity.de/home-automation/${pkgname}/repository/archive.tar.gz?ref=${pkgver}")
 md5sums=('1af7cf893facbde86865c56235195657')
-backup=(etc/avm-motion-trigger.conf)
+backup=(etc/avm-motion-trigger.conf etc/avm-motion-trigger.d/pre-motion.sh etc/avm-motion-trigger.d/post-motion.sh etc/avm-motion-trigger.d/pre-turn-off.sh etc/avm-motion-trigger.d/post-turn-off.sh)
 
 build() {
   cd ${pkgname}-${pkgver}-*

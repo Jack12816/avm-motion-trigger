@@ -49,6 +49,12 @@ struct config {
         const char *light_dev;
         int light_channel;
     } sensor;
+    struct config_hooks {
+        const char *motion_pre;
+        const char *motion_post;
+        const char *turn_off_pre;
+        const char *turn_off_post;
+    } hooks;
     struct config_t *ptr;
 };
 

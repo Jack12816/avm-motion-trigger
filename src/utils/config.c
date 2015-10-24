@@ -62,6 +62,11 @@ struct config* init_config(struct config *conf)
     conf->sensor.light_dev = "/dev/spidev0.0";
     conf->sensor.light_channel = 0;
 
+    conf->hooks.motion_pre = "";
+    conf->hooks.motion_post = "";
+    conf->hooks.turn_off_pre = "";
+    conf->hooks.turn_off_post = "";
+
     return conf;
 }
 
@@ -141,6 +146,14 @@ struct config get_config(const char *path)
     config_lookup_int(c, "motion_sensor_gpio", &conf.sensor.motion_gpio);
     config_lookup_string(c, "light_sensor_device", &conf.sensor.light_dev);
     config_lookup_int(c, "light_sensor_channel", &conf.sensor.light_channel);
+
+    /*
+     * Custom hooks
+     */
+    config_lookup_string(c, "motion_pre_hook", &conf.hooks.motion_pre);
+    config_lookup_string(c, "motion_post_hook", &conf.hooks.motion_post);
+    config_lookup_string(c, "turn_off_pre_hook", &conf.hooks.turn_off_pre);
+    config_lookup_string(c, "turn_off_post_hook", &conf.hooks.turn_off_post);
 
     free((char*) actor_command);
     free((char*) desired_actor_state);

@@ -172,7 +172,7 @@ void run_hook(const char *hook_path)
 
     utlog(LOG_NOTICE, "  Run custom hook: %s\n", hook_path);
 
-    int len = strlen(hook_path) + 20;
+    int len = strlen(hook_path) + 30;
     char cmd[len];
     snprintf(cmd, len, "sh %s 2>&1 1>/dev/null &", hook_path);
 

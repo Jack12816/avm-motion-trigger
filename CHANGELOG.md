@@ -1,3 +1,7 @@
+## 1.1.0
+
+* Added support for custom hooks (See #16)
+
 ## 1.0.0
 
 * The `avm-motion-triggerd` is stable now and is used productive now

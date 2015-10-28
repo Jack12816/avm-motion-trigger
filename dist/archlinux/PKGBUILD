@@ -9,7 +9,7 @@ arch=('armv6h' 'armv7h' 'x86_64')
 license=('GPLv3')
 depends=('glibc' 'libconfig' 'curl' 'libbcm2835' 'libxml2')
 source=("http://code.jity.de/home-automation/${pkgname}/repository/archive.tar.gz?ref=${pkgver}")
-md5sums=('c43d32c2870c8873bbd788044768f4d2')
+md5sums=('b79912dc8d5c23a12be2b6e843743ef8')
 backup=(etc/avm-motion-trigger.conf etc/avm-motion-trigger.d/pre-motion.sh etc/avm-motion-trigger.d/post-motion.sh etc/avm-motion-trigger.d/pre-turn-off.sh etc/avm-motion-trigger.d/post-turn-off.sh)
 
 build() {
